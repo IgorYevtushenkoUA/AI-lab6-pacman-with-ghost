@@ -1,0 +1,52 @@
+body {
+  display: grid;
+  grid-template-columns: 1120px 1fr;
+  grid-gap: 20px;
+}
+body select {
+  font-size: 20px;
+  width: 60px;
+  height: 30px;
+  border: none;
+  margin-left: 15px;
+}
+body button {
+  background-color: #555555;
+  color: #e7e7e7;
+  border-radius: 10px;
+  width: 80px;
+  height: 45px;
+  font-size: 15px;
+  text-align: center;
+  outline: none;
+}
+body button:hover {
+  background-color: #e7e7e7;
+  color: #555555;
+}
+body .menu .level {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+body .menu .ghost {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+body .menu .ghost .ghost_num,
+body .menu .ghost .ghost_speed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+body .menu .pacman {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+body .menu .pacman .pacman_speed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/*# sourceMappingURL=style.css.map */

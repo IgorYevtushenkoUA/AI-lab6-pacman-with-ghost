@@ -1,6 +1,15 @@
+let ghostNum = document.getElementById("ghost_num").value
+let ghostsSpeed = document.getElementById("ghost_speed").value
+let pacmanSpeed = document.getElementById("pacman_speed").value
+
+let btnStart = document.getElementById("btn_start").addEventListener("click", function () {})
+let btnRestore = document.getElementById("btn_restore").addEventListener("click", function () {})
+let btnStop = document.getElementById("btn_stop").addEventListener("click", function () {})
+alert()
+
 let canvasID = "myCanvas";
-let CANVAS_WIDTH = 1120;
-let CANVAS_HEIGHT = 600;
+let CANVAS_WIDTH = document.getElementById("myCanvas").width;
+let CANVAS_HEIGHT = document.getElementById("myCanvas").height;
 let canvas = document.getElementById(canvasID);
 let ctx = canvas.getContext("2d");
 
@@ -11,7 +20,6 @@ let WALL_WIDTH = 2;
 let numRows = CANVAS_WIDTH / GRID_HEIGHT;
 let numCols = CANVAS_HEIGHT / GRID_WIDTH;
 
-// colors for UI & Pacman
 let BG_COLOR = "black";
 let BORDER_COLOR = "blue";
 let BEAN_COLOR = "white";
@@ -23,7 +31,6 @@ let PINK = "#ff9cce";
 let CYAN = "#00ffde";
 let ORANGE = "#ffb847";
 let WEAK_COLOR = "#0031ff";
-let BLINKING_COLOR = "white";
 
 // size of sprites
 let NORMAL_BEAN_RADIUS = 2;
@@ -147,37 +154,37 @@ x1y1..........x2
 ..............y2
  */
 let noBeans = [
-    [1,3,1,2],
-    [0,3,4,10],
-    [1,4,12,13],
-    [5,13,1,3],
-    [5,7,4,10],
-    [8,13,8,10],
-    [9,11,5,6],
-    [12,13,5,7],
-    [6,15,12,13],
-    [15,29,1,2],
-    [15,21,4,10],
-    [23,29,4,10],
-    [17,18,12,15],
-    [20,29,12,13],
-    [31,38,1,2],
-    [31,34,4,8],
-    [34,38,8,8],
-    [35,38,4,7],
-    [40,42,1,10],
-    [44,49,1,2],
-    [50,54,1,2],
-    [31,38,10,11],
-    [34,35,12,13],
-    [31,32,13,14],
-    [37,38,13,14],
-    [40,48, 12,13],
-    [50,54,12,13],
-    [44,46,4,10],
-    [46,50,4,7],
-    [46,50,9,10],
-    [52,55,4,10],
+    [1, 3, 1, 2],
+    [0, 3, 4, 10],
+    [1, 4, 12, 13],
+    [5, 13, 1, 3],
+    [5, 7, 4, 10],
+    [8, 13, 8, 10],
+    [9, 11, 5, 6],
+    [12, 13, 5, 7],
+    [6, 15, 12, 13],
+    [15, 29, 1, 2],
+    [15, 21, 4, 10],
+    [23, 29, 4, 10],
+    [17, 18, 12, 15],
+    [20, 29, 12, 13],
+    [31, 38, 1, 2],
+    [31, 34, 4, 8],
+    [34, 38, 8, 8],
+    [35, 38, 4, 7],
+    [40, 42, 1, 10],
+    [44, 49, 1, 2],
+    [50, 54, 1, 2],
+    [31, 38, 10, 11],
+    [34, 35, 12, 13],
+    [31, 32, 13, 14],
+    [37, 38, 13, 14],
+    [40, 48, 12, 13],
+    [50, 54, 12, 13],
+    [44, 46, 4, 10],
+    [46, 50, 4, 7],
+    [46, 50, 9, 10],
+    [52, 55, 4, 10],
     [],
 
 ]
@@ -261,7 +268,7 @@ function initMaze() {
 
 function initFields() {
     let tempGhostNum = 1
-    for (let i = 0 ; i < tempGhostNum; i++)  ghostHouse[i] = [4+i,35]
+    for (let i = 0; i < tempGhostNum; i++) ghostHouse[i] = [4 + i, 35]
     fillWithoutBeans()
 
 }
@@ -426,22 +433,22 @@ function updateCanvas() {
     restartTimer++;
 
 
-        eatBean();
-        mrPacman.move();
+    eatBean();
+    mrPacman.move();
 
-        for (let i = 0; i < ghosts.length; i++) {
-            ghosts[i].move();
-        }
+    for (let i = 0; i < ghosts.length; i++) {
+        ghosts[i].move();
+    }
 
-        fixGrids(mrPacman.x, mrPacman.y);
-        for (let i = 0; i < ghosts.length; i++) {
-            fixGrids(ghosts[i].x, ghosts[i].y);
-        }
+    fixGrids(mrPacman.x, mrPacman.y);
+    for (let i = 0; i < ghosts.length; i++) {
+        fixGrids(ghosts[i].x, ghosts[i].y);
+    }
 
-        mrPacman.draw();
-        for (let i = 0; i < ghosts.length; i++) {
-            ghosts[i].draw();
-        }
+    mrPacman.draw();
+    for (let i = 0; i < ghosts.length; i++) {
+        ghosts[i].draw();
+    }
 
 }
 
@@ -463,7 +470,7 @@ function eatBean() {
 function countDown() {
     setTimeout(function () {
         intervalId = setInterval(updateCanvas, timerDelay);
-    },1000)
+    }, 1000)
 }
 
 /*==================END UI Update Methods================*/
