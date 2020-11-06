@@ -1,4 +1,4 @@
-class Vertex {
+export class Vertex {
     constructor(name, x, y, id) {
         this._name = name
         this._x = x

@@ -1,0 +1,20 @@
+{
+  "name": "ai-lab6-pacman-with-ghost",
+  "version": "1.0.0",
+  "description": "Доробити проект Pac-Man  В лабіринт додати:  Точки. За кожну точку, що пакман з'їв додавати +1 бал. Якщо пакман з'їв всі точки на карті це означає, що він виграв Привидів. Привиди рухають картою і намагаються з'їсти пакмана. Якщо привид з'їв пакмана - програш Рівні. З кожним рівнем збільшується складність гри. Привиди та пакман мають керуватися мінімаксним алгоритмом або альфа-бета відтинанням.  В алгоритм привидів, додати рандомний крок.",
+  "main": "Game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgorYevtushenkoUA/AI-lab6-pacman-with-ghost.git"
+  },
+  "author": "Igor_Yevtushenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IgorYevtushenkoUA/AI-lab6-pacman-with-ghost/issues"
+  },
+  "homepage": "https://github.com/IgorYevtushenkoUA/AI-lab6-pacman-with-ghost#readme",
+  "type": "module"
+}
