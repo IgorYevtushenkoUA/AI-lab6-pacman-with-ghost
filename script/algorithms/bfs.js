@@ -1,4 +1,4 @@
-function findShortestDist_BFS(adj, s, dest, v) {
+export function findShortestDist_BFS(adj, s, dest, v) {
     let pred = []
     let dist = []
     if (_BFS_Algorithm(adj, s, dest, v, pred, dist) === false) {

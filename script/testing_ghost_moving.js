@@ -1,4 +1,5 @@
 import {Vertex} from "./graph/vertex.js";
+import {findShortestDist_BFS} from "./algorithms/bfs.js";
 
 let map_copy = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -349,7 +350,80 @@ function stayBetweenVertexes(posX, posY, vertex1, vertex2) {
 }
 
 
-console.log(stayBetweenVertexes(1, 4, vertexes[0], vertexes[3]));
+/**
+ *
+ * @param {Vertex} vertex
+ */
+function getIndexByVertexName(vertex) {
+
+    let letter = vertex.getName()[0],
+        number = vertex.getName()[1]
+    switch (letter) {
+        case "A" :
+            return parseInt(number)
+        case "B" :
+            return 10 + parseInt(number)
+        case "C" :
+            return 20 + parseInt(number)
+        case "D" :
+            return 30 + parseInt(number)
+        case "E" :
+            return 40 + parseInt(number)
+        case "F" :
+            return 50 + parseInt(number)
+    }
+
+}
+
+function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix) {
+    let bfs_path = findShortestDist_BFS(adj, s, dest, vertexes.length)
+    allPath.push(prefix.concat(bfs_path))
+    isVisited[getIndexByVertexName(s)] = true
+    isVisited[getIndexByVertexName(dest)] = true
+    prefix.push(s)
+    // if (prefix.length > 1 && isEqualVertexes(prefix[prefix.length - 1], s))
+    //     prefix.pop()
+
+
+    // todo багаторевніний isVisited
+    // without first and last todo check (i < bfs_path.length-1)
+    for (let i = 0; i < bfs_path.length; i++) {
+        let vertexIndex = getIndexByVertexName(bfs_path[i])
+
+        let adj_neighbors = adj[vertexIndex]
+        for (let j = 0; j < adj[vertexIndex].length; j++) {
+            let tempVertex = getIndexByVertexName(adj[vertexIndex][j])
+
+            if (isVisited[tempVertex] === false) {
+                let newSource = adj[vertexIndex][j]
+                // prefix.push(newSource)
+                findAllPathFromSourceToDestination(newSource, dest, isVisited, allPath, prefix)
+                prefix.pop()
+            }
+
+        }
+
+    }
+    return allPath
+}
+
+
+let isVisited = []
+for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
+console.log(findAllPathFromSourceToDestination(vertexes[0], vertexes[3], isVisited, [], []));
+
+
+/**
+ *
+ * @param {Vertex} v1
+ * @param {Vertex} v2
+ */
+function isEqualVertexes(v1, v2) {
+    // console.log("\n")
+    // console.log(v1)
+    // console.log(v2)
+    return v1.getY() === v2.getY() && v1.getX() === v2.getX()
+}
 
 // getYourVertex()
 
