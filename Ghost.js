@@ -5,7 +5,6 @@ function Ghost(xCord, yCord, gColor, direction, id) {
     this.id = id
     this.dir = direction;
     this.radius = GHOST_RADIUS;
-    this.isMoving = false;
     this.speed = speed;
     this.stepCounter = 0;
 
@@ -100,13 +99,14 @@ Ghost.prototype.moveOneStep = function () {
 
 //try to turn(if necessary) and move the ghost
 Ghost.prototype.move = function () {
-    this.isMoving = !this.isMoving;//so the ghost looks like it's moving
+
     if (this.stepCounter != 0 && this.stepCounter % 2 != 0) {
         this.speed = speed / 2;
         this.stepCounter = 0;
     } else {
         this.speed = speed;
     }
+    debugger
     if (onGridCenter(this.x, this.y) === false) {
         this.moveOneStep();
     } else {

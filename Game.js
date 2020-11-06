@@ -5,7 +5,6 @@ let pacmanSpeed = document.getElementById("pacman_speed").value
 let btnStart = document.getElementById("btn_start").addEventListener("click", function () {})
 let btnRestore = document.getElementById("btn_restore").addEventListener("click", function () {})
 let btnStop = document.getElementById("btn_stop").addEventListener("click", function () {})
-alert()
 
 let canvasID = "myCanvas";
 let CANVAS_WIDTH = document.getElementById("myCanvas").width;
@@ -236,7 +235,7 @@ function initMaze() {
     for (let row = 0; row < CANVAS_HEIGHT / GRID_HEIGHT; row++) {
         for (let col = 0; col < CANVAS_WIDTH / GRID_WIDTH; col++) {
             let beanType = NORMAL_BEAN;
-            if (row > 14) debugger
+            if (row > 14)
             var newGrid
             try {
                 newGrid = new Grid(col * GRID_WIDTH, row * GRID_HEIGHT, mazeContent[row][col], beanType);

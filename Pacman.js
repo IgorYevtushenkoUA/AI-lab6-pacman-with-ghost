@@ -17,51 +17,8 @@ Pacman.prototype.draw = function(color) {
 	}
 	ctx.beginPath();
 
-	if (!this.mouthOpen){
-		switch(this.dir){
-			case UP:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*11/18, 2*Math.PI-Math.PI*7/18, true);
-			break;
+	ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 
-			case DOWN:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*29/18, 2*Math.PI-Math.PI*25/18, true);
-			break;
-
-			case LEFT:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*10/9, 2*Math.PI-Math.PI*8/9, true);
-			break;
-
-			case RIGHT:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI/9, 2*Math.PI-Math.PI*17/9, true);
-			break;
-
-			default:
-			break;
-		}
-	}
-	else {
-		switch(this.dir){
-			case UP:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*7/9, 2*Math.PI-Math.PI*2/9, true);
-			break;
-
-			case DOWN:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*16/9, 2*Math.PI-Math.PI*11/9, true);
-			break;
-
-			case LEFT:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*23/18, 2*Math.PI-Math.PI*13/18, true);
-			break;
-
-			case RIGHT:
-			ctx.arc(this.x, this.y, this.radius, 2*Math.PI-Math.PI*5/18, 2*Math.PI-Math.PI*31/18, true);
-			break;
-
-			default:
-			break;
-
-		}
-	}
 	ctx.lineTo(this.x, this.y);
 	ctx.fill();
 };
