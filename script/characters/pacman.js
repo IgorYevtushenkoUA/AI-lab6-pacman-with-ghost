@@ -1,3 +1,5 @@
+import {ctx} from "../logic_elements/constants.js";
+
 export class Pacman {
     'use strict'
     _posX = 0
@@ -8,7 +10,7 @@ export class Pacman {
     _radius = 0
     _vertex = undefined // i`m not sure that i need this
 
-    constructor(x, y, life, beans, speed, radius, vertex) {
+    constructor(x, y, life=3, beans=0, speed=5, radius=5, vertex=0) {
         this._posX = x
         this._posY = y
         this._life = life
@@ -18,19 +20,53 @@ export class Pacman {
         this._vertex = vertex
     }
 
-    getX()          {return this._posX}
-    getY()          {return this._posY}
-    getLife()       {return this._life}
-    getSpeed()      {return this._speed}
-    getVertex()     {return this._vertex}
-    getEatenBean()  {return this._eatenBeans}
+    getX() {
+        return this._posX
+    }
 
-    setX(x)         {this._posX = x}
-    setY(y)         {this._posY = y}
-    setLife(life)   {this._life = life}
-    setSpeed(s)     {this._speed = s}
-    setVertex(v)    {this._vertex = v}
-    setEatenBean(b) {this._eatenBeans = b}
+    getY() {
+        return this._posY
+    }
+
+    getLife() {
+        return this._life
+    }
+
+    getSpeed() {
+        return this._speed
+    }
+
+    getVertex() {
+        return this._vertex
+    }
+
+    getEatenBean() {
+        return this._eatenBeans
+    }
+
+    setX(x) {
+        this._posX = x
+    }
+
+    setY(y) {
+        this._posY = y
+    }
+
+    setLife(life) {
+        this._life = life
+    }
+
+    setSpeed(s) {
+        this._speed = s
+    }
+
+    setVertex(v) {
+        this._vertex = v
+    }
+
+    setEatenBean(b) {
+        this._eatenBeans = b
+    }
 
     draw() {
         let pacman_color = "yellow"
@@ -42,23 +78,23 @@ export class Pacman {
     }
 
     // move in current Vertex
-    doOneStep(side, x, y){
+    doOneStep(side, x, y) {
         let newX, newY
         switch (side) {
             case "TOP" :
                 newX = x
-                newY = y - this._speed
+                newY = y - 10
                 break
             case "RIGHT" :
-                newX = x + this._speed
+                newX = x + 10
                 newY = y
                 break
-            case "BOTTOM" :
+            case "BOTTOM " :
                 newX = x
-                newY = y + this._speed
+                newY = y + 10
                 break
             case "LEFT" :
-                newX = x -  this._speed
+                newX = x - 10
                 newY = y
                 break
         }
@@ -66,12 +102,17 @@ export class Pacman {
         this._posY = newY
     }
 
-    pacmanMove(){
-
+    pacmanMove() {
+        this.doOneStep("LEFT", 5, 1)
     }
 
 
+    getPacmanMapPositionX(blockWidth) {
+        return this._posX * blockWidth
+    }
 
-
+    getPacmanMapPositionY(blockHeight) {
+        return this._posY * blockHeight
+    }
 
 }

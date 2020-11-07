@@ -1,10 +1,133 @@
+let copy_pacman
+
+class Pacman2 {
+    'use strict'
+    _posX = 0
+    _posY = 0
+    _life = 0
+    _eatenBeans = 0
+    _speed = 0
+    _radius = 0
+    _vertex = undefined // i`m not sure that i need this
+
+    constructor(x, y, life = 3, beans = 0, speed = 5, radius = 5, vertex = 0) {
+        this._posX = x
+        this._posY = y
+        this._life = life
+        this._eatenBeans = beans
+        this._speed = speed
+        this._radius = radius
+        this._vertex = vertex
+    }
+
+    getX() {
+        return this._posX
+    }
+
+    getY() {
+        return this._posY
+    }
+
+    getLife() {
+        return this._life
+    }
+
+    getSpeed() {
+        return this._speed
+    }
+
+    getVertex() {
+        return this._vertex
+    }
+
+    getEatenBean() {
+        return this._eatenBeans
+    }
+
+    setX(x) {
+        this._posX = x
+    }
+
+    setY(y) {
+        this._posY = y
+    }
+
+    setLife(life) {
+        this._life = life
+    }
+
+    setSpeed(s) {
+        this._speed = s
+    }
+
+    setVertex(v) {
+        this._vertex = v
+    }
+
+    setEatenBean(b) {
+        this._eatenBeans = b
+    }
+
+    draw() {
+        let pacman_color = "yellow"
+        ctx.fillStyle = pacman_color
+        ctx.beginPath()
+        ctx.arc(this._posX, this._posY, this._radius, 0, Math.PI * 2, true);
+        ctx.lineTo(this._posX, this._posY)
+        ctx.fill()
+    }
+
+    // move in current Vertex
+    doOneStep(side, x, y) {
+        let newX, newY
+        switch (side) {
+            case "TOP" :
+                newX = x
+                newY = y - this._speed
+                break
+            case "RIGHT" :
+                newX = x + this._speed
+                newY = y
+                break
+            case "BOTTOM " :
+                newX = x
+                newY = y + this._speed
+                break
+            case "LEFT" :
+                newX = x - this._speed
+                newY = y
+                break
+        }
+        this._posX = newX
+        this._posY = newY
+    }
+
+    pacmanMove() {
+        this.doOneStep("LEFT", 5, 1)
+    }
+
+
+    getPacmanMapPositionX(blockWidth) {
+        return this._posX * blockWidth
+    }
+
+    getPacmanMapPositionY(blockHeight) {
+        return this._posY * blockHeight
+    }
+
+
+}
+
 let ghostNum = document.getElementById("ghost_num").value
 let ghostsSpeed = document.getElementById("ghost_speed").value
 let pacmanSpeed = document.getElementById("pacman_speed").value
 
-let btnStart = document.getElementById("btn_start").addEventListener("click", function () {})
-let btnRestore = document.getElementById("btn_restore").addEventListener("click", function () {})
-let btnStop = document.getElementById("btn_stop").addEventListener("click", function () {})
+let btnStart = document.getElementById("btn_start").addEventListener("click", function () {
+})
+let btnRestore = document.getElementById("btn_restore").addEventListener("click", function () {
+})
+let btnStop = document.getElementById("btn_stop").addEventListener("click", function () {
+})
 
 let canvasID = "myCanvas";
 let CANVAS_WIDTH = document.getElementById("myCanvas").width;
@@ -236,7 +359,7 @@ function initMaze() {
         for (let col = 0; col < CANVAS_WIDTH / GRID_WIDTH; col++) {
             let beanType = NORMAL_BEAN;
             if (row > 14)
-            var newGrid
+                var newGrid
             try {
                 newGrid = new Grid(col * GRID_WIDTH, row * GRID_HEIGHT, mazeContent[row][col], beanType);
             } catch (e) {
@@ -431,9 +554,30 @@ function welcomeScreen() {
 function updateCanvas() {
     restartTimer++;
 
-
+// ???????????
     eatBean();
     mrPacman.move();
+
+    // let x = copy_pacman.getX()
+    // let y = copy_pacman.getY()
+    //
+    // console.log("x :: " + x)
+    //
+    // debugger
+    // copy_pacman.doOneStep("LEFT", 5 * GRID_WIDTH + GRID_WIDTH / 2, y * GRID_HEIGHT + GRID_HEIGHT / 2)
+    //
+    // copy_pacman.setX(x - 1)
+    // console.log("x :: " + copy_pacman.getX())
+
+    // воно робить один крок просто через сталі значення воно не може робитикроки далі а так ніби завтра буде цікаво
+
+    let x = copy_pacman.getX()
+    let y = copy_pacman.getY()
+    console.log(x)
+    copy_pacman.doOneStep("LEFT", x, pacmanStartLoc[0] * GRID_HEIGHT + GRID_HEIGHT / 2)
+    fixGrids()
+    debugger
+
 
     for (let i = 0; i < ghosts.length; i++) {
         ghosts[i].move();
@@ -445,6 +589,7 @@ function updateCanvas() {
     }
 
     mrPacman.draw();
+    copy_pacman.draw()
     for (let i = 0; i < ghosts.length; i++) {
         ghosts[i].draw();
     }
@@ -578,6 +723,9 @@ function run(isGodMode) {
     // showScore();
 
     mrPacman = new Pacman(pacmanStartLoc[1] * GRID_WIDTH + GRID_WIDTH / 2, pacmanStartLoc[0] * GRID_HEIGHT + GRID_HEIGHT / 2, RIGHT);
+
+    copy_pacman = new Pacman2(5 * GRID_WIDTH + GRID_WIDTH / 2, pacmanStartLoc[0] * GRID_HEIGHT + GRID_HEIGHT / 2)
+
     if (isGodMode === undefined || !isGodMode) {
         ghost1 = new Ghost(0, 0, RED, DOWN, 1);
         ghost1.setInStartPosition();
@@ -590,6 +738,7 @@ function run(isGodMode) {
         ghosts = [];
     }
     mrPacman.draw();
+    copy_pacman.draw()
     countDown();
 }
 

@@ -106,7 +106,7 @@ Ghost.prototype.move = function () {
     } else {
         this.speed = speed;
     }
-    debugger
+    // debugger
     if (onGridCenter(this.x, this.y) === false) {
         this.moveOneStep();
     } else {
