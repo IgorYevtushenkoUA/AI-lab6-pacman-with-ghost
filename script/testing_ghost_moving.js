@@ -5,30 +5,13 @@ import {Vertex} from "./graph/vertex.js";
 import {MAP} from "./data/data_map.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 
-
 fillADJ()
 
+
+let map = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,1,0,0,0,0,0,2,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,1,0,0,0,0,0,2,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,2,1,1,1,1,1,1,1,2,2,2,2,2,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,1,1,1,1,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
 let score = 0
-for (let i = 0; i < MAP.length; i++) {
-    if (MAP[i] === 1) score++
-}
 
-function packmanMove(posX, posY) {
-    let nextBean = findNearestBean()
-}
-
-//1) Знайти найближчий крекер
-
-/**
- * шукає найближчий доступний КРЕКЕР навколо себе
- *      ***
- *      *0*
- *      ***
- * @param pacmanX
- * @param packmanY
- * @param map
- * @returns {*}
- */
 function findNearestBean(pacmanX, packmanY, map) {
     let generation = 0
     let ceil = 1
@@ -43,36 +26,31 @@ function findNearestBean(pacmanX, packmanY, map) {
         neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === 1))]
         isBean = neighbors.length > 0
     }
-
-    function findTheBestBeanLocation() {
-        let neighbor_weight = {}
-        for (let i = 0; i < neighbors.length; i++) {
-        }
-
-
-    }
-
-
     // return neighbors[neighbors.length - 1]
     return neighbors[0]
 }
 
-function getCoordinationByMapPositions(index) {
-    let y = Math.floor(index / MAP_WIDTH)
-    let x = index - (y * MAP_WIDTH)
-    return [x, y]
+function findNearestBean2(pacmanX, pacmanY, map) {
+    let generation = 0,
+        ceil = 1,
+        isBean = false,
+        allNeighbors = [],
+        neighbors
+    // todo del && ceil !== MAP_WIDTH (we have score to know when finish)
+    while (!isBean && ceil !== MAP_WIDTH) {
+        generation++
+        ceil += 2
+        allNeighbors = findNeighbor(generation, ceil, pacmanX, pacmanY)
+        // знаходимо всі одиниці та видаляємо дублікати
+        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === 1))]
+        isBean = neighbors.length > 0
+    }
+    console.log(neighbors)
+    let bean_weight = countBeanWeight(pacmanX, pacmanY, neighbors)
+    let best_bean_position = Array.from(sortMap(bean_weight))
+    return best_bean_position[0][0]
 }
 
-// console.log(findNearestBean(2, 1, MAP))
-
-/**
- * повертає всіх сусидів залежно від покоління пошуку
- * @param generation
- * @param ceil
- * @param posX
- * @param posY
- * @returns {unknown[]}
- */
 function findNeighbor(generation, ceil, posX, posY) {
     function hasLeftNeighbors() {
         return (posX - generation) >= 0
@@ -157,173 +135,31 @@ function findNeighbor(generation, ceil, posX, posY) {
     return neighbors
 }
 
-//2) Побудувати шлях до крекеру
 
-function getYourVertexes(posX, posY) {
+function heuristic(x, y, x2, y2) {
+    return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2))
+}
 
-    for (let i = 0; i < adj.length; i++) {
-        let currV = vertexes[0]
-        if (stayInVertexTop(posX, posY, currV)) {
-            return currV
-        }
+function countBeanWeight(pacmanX, pacmanY, neighbors) {
+    let neighbor_weight = new Map()
+    for (let i = 0; i < neighbors.length; i++) {
+        let beanCoordination = getBEANCoordinationByMapPositions(neighbors[i]),
+            beanX = beanCoordination[0],
+            beanY = beanCoordination[1],
+            val = -1 * heuristic(pacmanX, pacmanY, beanX, beanY)
 
-        for (let j = 0; j < adj[i].length; j++) {
-            let tempV = adj[i]
-            if (stayBetweenVertexes(posX, posY, currV, tempV)) {
-                return [currV, tempV]
-            }
-        }
+        if (isOneLineY(pacmanX, beanX) || isOneLineX(pacmanY, beanY)) val++
+
+        neighbor_weight.set(neighbors[i], val)
     }
+    return neighbor_weight
 }
 
-
-function getVertexesByPosition(posX, posY) {
-
-    // перевірити спочатку всі вершини
-    for (let i = 0 ; i < vertexes.length;i++){
-        let currV = vertexes[i]
-        if (stayInVertexTop(posX, posY, currV)) {
-            return currV
-        }
-    }
-    // перевірити всершини - вершин (тобто всі ті вершини, що належать вершині А)
-    for (let i = 0; i < adj.length; i++) {
-        let currV = vertexes[i]
-        for (let j = 0; j < adj[i].length; j++) {
-            let tempV = adj[i][j]
-            if (stayBetweenVertexes(posX, posY, currV, tempV)) {
-                return [currV, tempV]
-            }
-        }
-    }
+function getBEANCoordinationByMapPositions(index) {
+    let y = Math.floor(index / MAP_WIDTH)
+    let x = index - (y * MAP_WIDTH)
+    return [x, y]
 }
-
-
-
-
-
-
-// console.log(getVertexesByPosition(51, 10))
-
-
-/**
- * перевіряємо чи ОБ'ЄКТ стоїть на вершині (на перехресті доріг)
- * @param {number} posX
- * @param {number} posY
- * @param {Vertex} vertex
- */
-function stayInVertexTop(posX, posY, vertex) {
-    let x = vertex.getX(),
-        y = vertex.getY()
-    return x === posX && y === posY
-}
-
-/**
- * перевіряємо чи ОБ'ЄКТ стоїть між вершинами А ти Б
- * @param {number} posX
- * @param {number} posY
- * @param {Vertex} vertex1
- * @param {Vertex} vertex2
- */
-function stayBetweenVertexes(posX, posY, vertex1, vertex2) {
-    let x1 = vertex1.getX(),
-        y1 = vertex1.getY(),
-        x2 = vertex2.getX(),
-        y2 = vertex2.getY(),
-        maxX = Math.max(x1, x2),
-        minX = Math.min(x1, x2),
-        maxY = Math.max(y1, y2),
-        minY = Math.min(y1, y2)
-    return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
-}
-
-
-/**
- *
- * @param {Vertex} vertex
- */
-function getIndexByVertexName(vertex) {
-
-    let letter = vertex.getName()[0],
-        number = vertex.getName()[1]
-    switch (letter) {
-        case "A" :
-            return parseInt(number)
-        case "B" :
-            return 10 + parseInt(number)
-        case "C" :
-            return 20 + parseInt(number)
-        case "D" :
-            return 30 + parseInt(number)
-        case "E" :
-            return 40 + parseInt(number)
-        case "F" :
-            return 50 + parseInt(number)
-    }
-
-}
-
-function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix) {
-    let bfs_path = findShortestDist_BFS(adj, s, dest, vertexes.length)
-    allPath.push(prefix.concat(bfs_path))
-    isVisited[getIndexByVertexName(s)] = true
-    isVisited[getIndexByVertexName(dest)] = true
-    prefix.push(s)
-
-    for (let i = 0; i < bfs_path.length; i++) {
-        let vertexIndex = getIndexByVertexName(bfs_path[i])
-
-        for (let j = 0; j < adj[vertexIndex].length; j++) {
-            let tempVertex = getIndexByVertexName(adj[vertexIndex][j])
-
-            if (isVisited[tempVertex] === false) {
-                let newSource = adj[vertexIndex][j]
-                findAllPathFromSourceToDestination(newSource, dest, isVisited, allPath, prefix)
-                prefix.pop()
-            }
-        }
-    }
-    return allPath
-}
-
-
-// let isVisited = []
-// for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
-// console.log(findAllPathFromSourceToDestination(vertexes[0], vertexes[3], isVisited, [], []));
-
-
-/**
- *
- * @param {Vertex} v1
- * @param {Vertex} v2
- */
-function isEqualVertexes(v1, v2) {
-    return v1.getY() === v2.getY() && v1.getX() === v2.getX()
-}
-
-// getYourVertex()
-
-/**
- * Інструкція для пакмена
- * 1) Знайти найближчий крекер
- * 2) Побудувати шлях до крекеру
- * 3) Вибрати найкращий шлях
- * 4) анімація поїдання та всього іншого
- *
- *
- * Інструкція длля привида
- * 1) знайти пакмена
- * 2) дійти до кінця вершини
- * 3) побудувати шлях до пакмена із своєї вершини до вершини де він знаходиться
- * 4) Якось мінімізувати все
- *
- *
- * Проблеми
- * як знайти сі можливі варіанти дійти з точки А до точки Б
- * як порахувати ефективність шляху
- * як зробити анімацію
- */
-
 
 function isOneLineY(pacX, beanX) {
     return pacX === beanX
@@ -333,53 +169,13 @@ function isOneLineX(pacY, beanY) {
     return pacY === beanY
 }
 
-function hasNotWallBetweenPacmanAndBean(pacX, pacY, beanX, beanY) {
-    let res = [false]
-    if (isOneLineX(pacY, beanY)) {
-        let x1 = Math.min(pacX, beanX)
-        let x2 = Math.max(pacX, beanX)
-
-        res = [true, true, false]
-
-        for (let i = x1; i < x2; i++) {
-            let index = i*MAP_WIDTH + pacX
-            if (MAP[index] === 0)
-                res = [false]
-        }
-    } else if (isOneLineY(pacX, beanX)) {
-        let y1 = Math.min(pacY, beanY)
-        let y2 = Math.max(pacY, beanY)
-
-        res = [true, false, true]
-
-        for (let i = y1; i < y2; i++) {
-            let index = i*MAP_WIDTH + pacX
-            if (MAP[index] === 0)
-                res = [false]
-        }
+function sortMap(map) {
+    map[Symbol.iterator] = function* () {
+        yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
     }
-    return res
+    return map
 }
 
-
-function getDistanceToVertex(x, y, vertex) {
-    if (isOneLineX(y, vertex.getY()))
-        return Math.abs(x - vertex.getX())
-    return Math.abs(y - vertex.getY())
-}
-
-console.log(getDistanceToVertex (52,10,vertexes[47]))//E7
-console.log(getDistanceToVertex (52,10,vertexes[37]))//D7
-
-
-// console.log(hasNotWallBetweenPacmanAndBean(43,13,49,13))
-
-
-
-
-
-
-
-
-
-
+console.log(findNearestBean(55, 1, map))
+console.log(findNearestBean2(55, 1, map))
+console.log(getBEANCoordinationByMapPositions(114))

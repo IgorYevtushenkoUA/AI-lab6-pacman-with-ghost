@@ -116,6 +116,7 @@ export class Pacman {
 
         let nearestBean = this.findNearestBean(x, y, MAP)
         let beanCoordinates = this.getBEANCoordinationByMapPositions(nearestBean)
+        debugger
         let beanX = beanCoordinates[0], beanY = beanCoordinates[1]
         let obstaclesInTheWay = this.hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY)
         let dir = ""
@@ -124,7 +125,6 @@ export class Pacman {
         // якщо лежить в одному напрямку без перешкод
         // todo додати перевырку на привида
         if (obstaclesInTheWay[0]) {
-            // if (this._score > score_const) debugger
 
             // go by X
             if (obstaclesInTheWay[1]) {
@@ -150,6 +150,9 @@ export class Pacman {
         }
         // якщо лежить у межах різних вершин
         else {
+            localStorage.setItem('map', MAP)
+            console.log(MAP)
+
             let pacmanVertex = this.getVertexesByPosition(x, y)
             let beanVertex = this.getVertexesByPosition(beanX, beanY)
             let beanNearestVertex, pacmanNearestVertex
@@ -175,20 +178,18 @@ export class Pacman {
                 if (pacmanVertex.length === 1) {
                     pacmanNearestVertex = pacmanVertex[0]
                 } else {
-                    pacmanNearestVertex = this.getDistanceToVertex(beanX, beanY, pacmanVertex[0]) <= this.getDistanceToVertex(beanX, beanY, pacmanVertex[1])
+                    pacmanNearestVertex = this.getDistanceToVertex(x, y, pacmanVertex[0]) <= this.getDistanceToVertex(x, y, pacmanVertex[1])
                         ? pacmanVertex[0]
                         : pacmanVertex[1]
                 }
             } catch (e) {
                 console.log("this.oldPath")
                 console.log(this.oldPath)
-                debugger
             }
             /**
              * тут помилка неправильна фінальна вершина вказується а потім якась діч відбувається
              */
-            // if (this._score > score_const) debugger
-            ``
+
             if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
 
                 dir = this.getDirFromOneVertex1ToVertex2(x, y, beanNearestVertex)
@@ -211,7 +212,6 @@ export class Pacman {
                     // todo тут воно обирає невірну вершину
 
                     dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
-                    debugger
                 }
                 // if stay between vertexes
                 else {
@@ -219,14 +219,11 @@ export class Pacman {
 
                     if (!this.isSamePaths(this.oldPath, bfs_path)) {
                         dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
-                        debugger
                     } else {
                         dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
-                        debugger
                     }
                 }
             }
-            // if (this._score > score_const) debugger
         }
 
 
