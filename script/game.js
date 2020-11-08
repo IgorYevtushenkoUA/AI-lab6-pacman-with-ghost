@@ -7,7 +7,7 @@ import {MAP} from "./data/data_map.js";
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 2, startPacmanY = 1,
+let startPacmanX = 3, startPacmanY = 1,
     score = 0,
     timerDelay = 300,
     intervalID,

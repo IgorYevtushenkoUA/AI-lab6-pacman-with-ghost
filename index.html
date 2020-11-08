@@ -1,76 +1,16 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>
-        PACMAN
-    </title>
-    <link rel="stylesheet" href="./style/style.css">
+    <meta charset="UTF-8">
+    <title>Title</title>
+
 </head>
-
 <body>
-<canvas id="myCanvas" width="1120" height="600">
-</canvas>
-<div class="menu">
-    <h1>
-        Game Menu
-    </h1>
-    <div class="level">
-        <h4>Level</h4>
-        <select name="level_game" id="level_game">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
-    </div>
 
-    <div class="ghost">
-        <h3>Ghost Menu</h3>
-        <div class="ghost_num">
-            <h4>Number</h4>
-            <select name="ghost_num" id="ghost_num">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select>
-        </div>
+<canvas id="pacman_game" width="1160" height="620"></canvas>
 
-        <div class="ghost_speed">
-            <h4>Speed</h4>
-            <select name="ghost_speed" id="ghost_speed">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-        </div>
 
-    </div>
 
-    <div class="pacman">
-        <h3>Pacman Menu</h3>
-        <div class="pacman_speed">
-            <h4>Speed</h4>
-            <select name="pacman_speed" id="pacman_speed">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-        </div>
-    </div>
-    <div>
-        <button class="btn_start"   id="btn_start" >Start</button>
-        <button class="btn_stop"    id="btn_stop" >Stop</button>
-        <button class="btn_restore" id="btn_restore" >Restore</button>
-    </div>
-</div>
-<script type="text/javascript" src="Pacman.js"></script>
-<script type="text/javascript" src="Ghost.js"></script>
-<script type="text/javascript" src="Grid.js"></script>
-<script type="text/javascript" src="Game.js"></script>
+<script  type="module" src="./script/game.js"></script>
 </body>
-
 </html>
