@@ -7,7 +7,7 @@ import {MAP} from "./data/data_map.js";
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 3, startPacmanY = 1,
+let startPacmanX = 55, startPacmanY = 1,
     score = 0,
     timerDelay = 300,
     intervalID,
@@ -76,10 +76,9 @@ function updateCanvas() {
     // pacman.doOneStep("RIGHT", x, y)
     pacman.doSmartStep(x, y)
     pacman.draw()
-    debugger
     eatBean(x, y)
-
-    alert(score)
+    // if (score % 10 === 0)
+    //     alert(score)
 }
 
 

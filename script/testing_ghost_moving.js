@@ -44,9 +44,9 @@ function findNearestBean(pacmanX, packmanY, map) {
         isBean = neighbors.length > 0
     }
 
-    function findTheBestBeanLocation(){
+    function findTheBestBeanLocation() {
         let neighbor_weight = {}
-        for (let i = 0 ; i < neighbors.length; i++){
+        for (let i = 0; i < neighbors.length; i++) {
         }
 
 
@@ -62,9 +62,8 @@ function getCoordinationByMapPositions(index) {
     let x = index - (y * MAP_WIDTH)
     return [x, y]
 }
-console.log(MAP[61])
 
-console.log(findNearestBean(2, 1, MAP))
+// console.log(findNearestBean(2, 1, MAP))
 
 /**
  * повертає всіх сусидів залежно від покоління пошуку
@@ -177,6 +176,29 @@ function getYourVertexes(posX, posY) {
     }
 }
 
+
+function getVertexesByPosition(posX, posY) {
+
+    for (let i = 0; i < adj.length; i++) {
+        let currV = vertexes[i]
+        if (stayInVertexTop(posX, posX, currV)) {
+            return currV
+        }
+
+        for (let j = 0; j < adj[i].length; j++) {
+            let tempV = adj[i][j]
+            if (stayBetweenVertexes(posX, posY, currV, tempV)) {
+                debugger
+                return [currV, tempV]
+            }
+        }
+    }
+}
+
+// console.log(getYourVertexes(54,1))
+console.log(getVertexesByPosition(54, 1))
+
+
 /**
  * перевіряємо чи ОБ'ЄКТ стоїть на вершині (на перехресті доріг)
  * @param {number} posX
@@ -205,7 +227,7 @@ function stayBetweenVertexes(posX, posY, vertex1, vertex2) {
         minX = Math.min(x1, x2),
         maxY = Math.max(y1, y2),
         minY = Math.min(y1, y2)
-    return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY)
+    return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
 }
 
 
@@ -297,6 +319,10 @@ function isEqualVertexes(v1, v2) {
  * як порахувати ефективність шляху
  * як зробити анімацію
  */
+
+
+
+
 
 
 

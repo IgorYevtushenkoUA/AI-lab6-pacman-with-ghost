@@ -2,6 +2,7 @@ import {BEAN_CODE, MAP_HEIGHT, MAP_WIDTH} from "../data/constants.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
 import {adj, vertexes} from "../data/data_graphs.js";
 import {HEIGHT, WIDTH} from "../data/constants.js";
+import {Vertex} from "../graph/vertex.js";
 import {MAP} from "../data/data_map.js";
 import {ctx} from "../game.js";
 
@@ -109,36 +110,9 @@ export class Pacman {
         ctx.fill()
     }
 
-    // move in current Vertex
-    doOneStep(side, x, y) {
-
-        let newX, newY
-        switch (side) {
-            case "TOP" :
-                newX = x
-                newY = y - 1
-                break
-            case "RIGHT" :
-                newX = x + 1
-                newY = y
-                break
-            case "BOTTOM " :
-                newX = x
-                newY = y + 1
-                break
-            case "LEFT" :
-                newX = x - 1
-                newY = y
-                break
-        }
-        this._posX = newX
-        this._posY = newY
-    }
-
     doSmartStep(x, y) {
-        debugger
+
         let nearestBean = this.findNearestBean(x, y, MAP)
-        debugger
         let beanCoordinates = this.getBEANCoordinationByMapPositions(nearestBean)
         let beanX = beanCoordinates[0], beanY = beanCoordinates[1]
         let obstaclesInTheWay = this.hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY)
@@ -146,8 +120,9 @@ export class Pacman {
 
 
         // якщо лежить в одному напрямку без перешкод
+        // todo додати перевырку на привида
         if (obstaclesInTheWay[0]) {
-            debugger
+
             // go by X
             if (obstaclesInTheWay[1]) {
                 if (beanX < x) {
@@ -168,13 +143,19 @@ export class Pacman {
                     // y++
                 }
             }
+
         }
         // якщо лежить у межах різних вершин
         else {
-            alert("do bfs search")
+            // alert("do bfs search")
             let pacmanVertex = this.getVertexesByPosition(x, y)
+            console.log("pacmanVertex")
+            console.log(pacmanVertex)
+            debugger
             let beanVertex = this.getVertexesByPosition(beanX, beanY)
             let beanNearestVertex, pacmanNearestVertex
+
+
             // знахолимо найближчий кут для монетки БІНА
             if (beanVertex.length === 1) {
                 beanNearestVertex = beanVertex[0]
@@ -194,20 +175,75 @@ export class Pacman {
 
             let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
 
-            // doStepToNearestVertex(){}
-            // doFromVertex1ToVertex2(){}
-            //
-            // якщо знаходжуся на вершині то будувати шлях від вершини до найближчої вершини
-            // інакше побудумати шлях у напрямку до цієї вершини
-
+            // if stay in vertex
+            debugger
+            if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
+                alert("stay in vertex")
+                dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+            }
+            // if stay between vertexes
+            else {
+                dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
+            }
         }
 
         this.doOneStep(dir, x, y)
+    }
+
+    /**
+     * зробити один крок
+     * @param side
+     * @param x
+     * @param y
+     */
+    doOneStep(side, x, y) {
+
+        let newX, newY
+
+        switch (side) {
+            case "TOP" :
+                newX = x
+                newY = y - 1
+                break
+            case "RIGHT" :
+                newX = x + 1
+                newY = y
+                break
+            case "BOTTOM" :
+                newX = x
+                newY = y + 1
+                break
+            case "LEFT" :
+                newX = x - 1
+                newY = y
+                break
+        }
+        this._posX = newX
+        this._posY = newY
 
     }
 
     /**
      *
+     * @param {Vertex} v2
+     * @returns {string}
+     */
+    getDirFromOneVertex1ToVertex2(x, y, v2) {
+        let dir = ""
+        if (x < v2.getX())
+            dir = "RIGHT"
+        else if (x > v2.getX())
+            dir = "LEFT"
+        else if (y > v2.getY())
+            dir = "TOP"
+        else if (y < v2.getY())
+            dir = "BOTTOM"
+        return dir
+    }
+
+
+    /**
+     * відстань від координат до Вершини
      * @param {number} x
      * @param {number} y
      * @param {Vertex} vertex
@@ -218,7 +254,14 @@ export class Pacman {
         return Math.abs(x - vertex.getX())
     }
 
-
+    /**
+     * чи є бар'єри між позицією пакмена та БІНА (КРЕКЕРА)
+     * @param pacX
+     * @param pacY
+     * @param beanX
+     * @param beanY
+     * @returns {[boolean]}
+     */
     hasNotWallBetweenPacmanAndBean(pacX, pacY, beanX, beanY) {
         let res = [false]
         if (this.isOneLineX(pacY, beanY)) {
@@ -234,7 +277,7 @@ export class Pacman {
             }
             res = [true, false, true]
         }
-        debugger
+
         return res
 
     }
@@ -277,12 +320,28 @@ export class Pacman {
 
         let bean_weight = this.countBeanWeight(pacmanX, pacmanY, neighbors)
         let best_bean_position = Array.from(this.sortMap(bean_weight))
-        return best_bean_position[0]
+        return best_bean_position[0][0]
     }
 
+    /**
+     * рахує відстань від А до Б
+     * @param x
+     * @param y
+     * @param x2
+     * @param y2
+     * @returns {number}
+     */
     heuristic(x, y, x2, y2) {
         return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2))
     }
+
+    /**
+     * рахує вагу ккожного БІНА (КРЕКЕРА)
+     * @param pacmanX
+     * @param pacmanY
+     * @param neighbors
+     * @returns {Map<any, any>}
+     */
 
     countBeanWeight(pacmanX, pacmanY, neighbors) {
         let neighbor_weight = new Map()
@@ -299,14 +358,23 @@ export class Pacman {
         return neighbor_weight
     }
 
+    /**
+     * сортує МАП
+     * @param map
+     * @returns {*}
+     */
     sortMap(map) {
         map[Symbol.iterator] = function* () {
-            yield* [...this.entries()].sort((a, b) => b[1]- a[1]);
+            yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
         }
         return map
     }
 
-
+    /**
+     * отримати із індекса координати
+     * @param index
+     * @returns {(number)[]}
+     */
     getBEANCoordinationByMapPositions(index) {
         let y = Math.floor(index / MAP_WIDTH)
         let x = index - (y * MAP_WIDTH)
@@ -407,17 +475,28 @@ export class Pacman {
 
 //2) Побудувати шлях до крекеру
 
+    isStayInVertex(x, y) {
+        for (let i = 0; i < vertexes.length; i++) {
+            let v = vertexes[i]
+            if (v.getX() === x && v.getY() === y) {
+                return true
+            }
+        }
+        return false
+    }
+
     getVertexesByPosition(posX, posY) {
 
         for (let i = 0; i < adj.length; i++) {
-            let currV = vertexes[0]
+            let currV = vertexes[i]
             if (this.stayInVertexTop(posX, posX, currV)) {
                 return currV
             }
 
             for (let j = 0; j < adj[i].length; j++) {
-                let tempV = adj[i]
+                let tempV = adj[i][j]
                 if (this.stayBetweenVertexes(posX, posY, currV, tempV)) {
+                    debugger
                     return [currV, tempV]
                 }
             }
@@ -444,6 +523,7 @@ export class Pacman {
      * @param {Vertex} vertex2
      */
     stayBetweenVertexes(posX, posY, vertex1, vertex2) {
+
         let x1 = vertex1.getX(),
             y1 = vertex1.getY(),
             x2 = vertex2.getX(),
@@ -452,7 +532,7 @@ export class Pacman {
             minX = Math.min(x1, x2),
             maxY = Math.max(y1, y2),
             minY = Math.min(y1, y2)
-        return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY)
+        return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
     }
 
 
