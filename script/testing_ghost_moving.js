@@ -163,7 +163,7 @@ function getYourVertexes(posX, posY) {
 
     for (let i = 0; i < adj.length; i++) {
         let currV = vertexes[0]
-        if (stayInVertexTop(posX, posX, currV)) {
+        if (stayInVertexTop(posX, posY, currV)) {
             return currV
         }
 
@@ -179,24 +179,31 @@ function getYourVertexes(posX, posY) {
 
 function getVertexesByPosition(posX, posY) {
 
-    for (let i = 0; i < adj.length; i++) {
+    // перевірити спочатку всі вершини
+    for (let i = 0 ; i < vertexes.length;i++){
         let currV = vertexes[i]
-        if (stayInVertexTop(posX, posX, currV)) {
+        if (stayInVertexTop(posX, posY, currV)) {
             return currV
         }
-
+    }
+    // перевірити всершини - вершин (тобто всі ті вершини, що належать вершині А)
+    for (let i = 0; i < adj.length; i++) {
+        let currV = vertexes[i]
         for (let j = 0; j < adj[i].length; j++) {
             let tempV = adj[i][j]
             if (stayBetweenVertexes(posX, posY, currV, tempV)) {
-                debugger
                 return [currV, tempV]
             }
         }
     }
 }
 
-// console.log(getYourVertexes(54,1))
-console.log(getVertexesByPosition(54, 1))
+
+
+
+
+
+// console.log(getVertexesByPosition(51, 10))
 
 
 /**
@@ -291,9 +298,6 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
  * @param {Vertex} v2
  */
 function isEqualVertexes(v1, v2) {
-    // console.log("\n")
-    // console.log(v1)
-    // console.log(v2)
     return v1.getY() === v2.getY() && v1.getX() === v2.getX()
 }
 
@@ -321,7 +325,54 @@ function isEqualVertexes(v1, v2) {
  */
 
 
+function isOneLineY(pacX, beanX) {
+    return pacX === beanX
+}
 
+function isOneLineX(pacY, beanY) {
+    return pacY === beanY
+}
+
+function hasNotWallBetweenPacmanAndBean(pacX, pacY, beanX, beanY) {
+    let res = [false]
+    if (isOneLineX(pacY, beanY)) {
+        let x1 = Math.min(pacX, beanX)
+        let x2 = Math.max(pacX, beanX)
+
+        res = [true, true, false]
+
+        for (let i = x1; i < x2; i++) {
+            let index = i*MAP_WIDTH + pacX
+            if (MAP[index] === 0)
+                res = [false]
+        }
+    } else if (isOneLineY(pacX, beanX)) {
+        let y1 = Math.min(pacY, beanY)
+        let y2 = Math.max(pacY, beanY)
+
+        res = [true, false, true]
+
+        for (let i = y1; i < y2; i++) {
+            let index = i*MAP_WIDTH + pacX
+            if (MAP[index] === 0)
+                res = [false]
+        }
+    }
+    return res
+}
+
+
+function getDistanceToVertex(x, y, vertex) {
+    if (isOneLineX(y, vertex.getY()))
+        return Math.abs(x - vertex.getX())
+    return Math.abs(y - vertex.getY())
+}
+
+console.log(getDistanceToVertex (52,10,vertexes[47]))//E7
+console.log(getDistanceToVertex (52,10,vertexes[37]))//D7
+
+
+// console.log(hasNotWallBetweenPacmanAndBean(43,13,49,13))
 
 
 

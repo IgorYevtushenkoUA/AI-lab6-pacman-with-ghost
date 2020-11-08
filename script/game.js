@@ -1,5 +1,5 @@
 import {BEAN_RADIUS, HEIGHT, MAP_HEIGHT, MAP_WIDTH, WIDTH} from "./data/constants.js";
-import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL} from "./data/constants.js";
+import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL,score_const} from "./data/constants.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 import {Pacman} from "./characters/pacman.js";
 import {MAP} from "./data/data_map.js";
@@ -9,7 +9,7 @@ export let ctx = document.getElementById('pacman_game').getContext("2d")
 //   x * WIDTH + 11, y * WIDTH + 10
 let startPacmanX = 55, startPacmanY = 1,
     score = 0,
-    timerDelay = 300,
+    timerDelay = 100,
     intervalID,
     pacman
 
@@ -56,7 +56,7 @@ function canEatBean(x, y) {
 function eatBean(x, y) {
     if (canEatBean(x, y)) {
         MAP[y * MAP_WIDTH + x] = 2
-        score++
+        pacman.setScore(score++)
     }
     clearPacmanFootprint(x, y)
 }
@@ -76,9 +76,9 @@ function updateCanvas() {
     // pacman.doOneStep("RIGHT", x, y)
     pacman.doSmartStep(x, y)
     pacman.draw()
+    // if (score > score_const) debugger
     eatBean(x, y)
-    // if (score % 10 === 0)
-    //     alert(score)
+
 }
 
 

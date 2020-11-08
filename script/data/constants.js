@@ -6,4 +6,5 @@ export const MAP_WIDTH = 58,
     COLOR_ROAD = "black",
     COLOR_BEAN = "white",
     COLOR_WALL = "blue",
-    BEAN_CODE = 1
+    BEAN_CODE = 1,
+    score_const = 84

@@ -1,7 +1,7 @@
 import {BEAN_CODE, MAP_HEIGHT, MAP_WIDTH} from "../data/constants.js";
+import {HEIGHT, WIDTH, score_const} from "../data/constants.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
 import {adj, vertexes} from "../data/data_graphs.js";
-import {HEIGHT, WIDTH} from "../data/constants.js";
 import {Vertex} from "../graph/vertex.js";
 import {MAP} from "../data/data_map.js";
 import {ctx} from "../game.js";
@@ -16,6 +16,8 @@ export class Pacman {
     _speed = 0
     _radius = 0
     _vertex = undefined // i`m not sure that i need this
+
+    oldPath = []
 
     constructor(x, y, life = 3, beans = 0, score = 0, speed = 5, radius = 8, vertex = 0) {
         this._posX = x
@@ -122,6 +124,7 @@ export class Pacman {
         // якщо лежить в одному напрямку без перешкод
         // todo додати перевырку на привида
         if (obstaclesInTheWay[0]) {
+            // if (this._score > score_const) debugger
 
             // go by X
             if (obstaclesInTheWay[1]) {
@@ -147,13 +150,16 @@ export class Pacman {
         }
         // якщо лежить у межах різних вершин
         else {
-            // alert("do bfs search")
             let pacmanVertex = this.getVertexesByPosition(x, y)
-            console.log("pacmanVertex")
-            console.log(pacmanVertex)
-            debugger
             let beanVertex = this.getVertexesByPosition(beanX, beanY)
             let beanNearestVertex, pacmanNearestVertex
+
+            console.log("pacX :: " + x + "\tpacY :: " + y)
+            console.log("pacmanVertex ::::    (length)   " + pacmanVertex)
+            console.log(pacmanVertex)
+            console.log("beanX :: " + beanX + "\tbeanY :: " + beanY)
+            console.log("beanVertex")
+            console.log(beanVertex)
 
 
             // знахолимо найближчий кут для монетки БІНА
@@ -165,30 +171,80 @@ export class Pacman {
                     : beanVertex[1]
             }
             // знаходимо найближчу вершину для пакмена
-            if (pacmanVertex.length === 1) {
-                pacmanNearestVertex = pacmanVertex[0]
+            try {
+                if (pacmanVertex.length === 1) {
+                    pacmanNearestVertex = pacmanVertex[0]
+                } else {
+                    pacmanNearestVertex = this.getDistanceToVertex(beanX, beanY, pacmanVertex[0]) <= this.getDistanceToVertex(beanX, beanY, pacmanVertex[1])
+                        ? pacmanVertex[0]
+                        : pacmanVertex[1]
+                }
+            } catch (e) {
+                console.log("this.oldPath")
+                console.log(this.oldPath)
+                debugger
+            }
+            /**
+             * тут помилка неправильна фінальна вершина вказується а потім якась діч відбувається
+             */
+            // if (this._score > score_const) debugger
+            ``
+            if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
+
+                dir = this.getDirFromOneVertex1ToVertex2(x, y, beanNearestVertex)
             } else {
-                pacmanNearestVertex = this.getDistanceToVertex(beanX, beanY, pacmanVertex[0]) <= this.getDistanceToVertex(beanX, beanY, pacmanVertex[1])
-                    ? pacmanVertex[0]
-                    : pacmanVertex[1]
-            }
 
-            let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
+                let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
 
-            // if stay in vertex
-            debugger
-            if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
-                alert("stay in vertex")
-                dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+                if (this.oldPath.length === 0) this.oldPath = bfs_path
+                else if (!this.isSamePaths(this.oldPath, bfs_path)) {
+                    this.oldPath = bfs_path
+                }
+                console.log("bfs_path")
+                console.log(bfs_path)
+                console.log("\n")
+
+
+                // todo можливо там не bfs_path[0] or bfs_path[1]
+                if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
+                    // alert("stay in vertex")
+                    // todo тут воно обирає невірну вершину
+
+                    dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+                    debugger
+                }
+                // if stay between vertexes
+                else {
+                    // todo important! тут іде зацикленість
+
+                    if (!this.isSamePaths(this.oldPath, bfs_path)) {
+                        dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
+                        debugger
+                    } else {
+                        dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+                        debugger
+                    }
+                }
             }
-            // if stay between vertexes
-            else {
-                dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
-            }
+            // if (this._score > score_const) debugger
         }
+
 
         this.doOneStep(dir, x, y)
     }
+
+    isSamePaths(p1, p2) {
+        if (p1.length !== p2.length) return false
+        for (let i = 0; i < p1.length; i++) {
+            if (!this.isEqualVertexes(p1[i], p2[i])) return false
+        }
+        return true
+    }
+
+    isEqualVertexes(v1, v2) {
+        return v1.getY() === v2.getY() && v1.getX() === v2.getX()
+    }
+
 
     /**
      * зробити один крок
@@ -250,8 +306,8 @@ export class Pacman {
      */
     getDistanceToVertex(x, y, vertex) {
         if (this.isOneLineX(y, vertex.getY()))
-            return Math.abs(y - vertex.getY())
-        return Math.abs(x - vertex.getX())
+            return Math.abs(x - vertex.getX())
+        return Math.abs(y - vertex.getY())
     }
 
     /**
@@ -262,25 +318,35 @@ export class Pacman {
      * @param beanY
      * @returns {[boolean]}
      */
+
     hasNotWallBetweenPacmanAndBean(pacX, pacY, beanX, beanY) {
         let res = [false]
         if (this.isOneLineX(pacY, beanY)) {
-            for (let i = pacX; i < beanX; i++) {
-                if (MAP[i] === 0)
-                    res = [false]
-            }
+            let x1 = Math.min(pacX, beanX)
+            let x2 = Math.max(pacX, beanX)
+
             res = [true, true, false]
-        } else if (this.isOneLineY(pacX, beanX)) {
-            for (let i = pacY; i < beanY; i++) {
-                if (MAP[i] === 0)
+
+            for (let i = x1; i < x2; i++) {
+                let index = i * MAP_WIDTH + pacX
+                if (MAP[index] === 0)
                     res = [false]
             }
+        } else if (this.isOneLineY(pacX, beanX)) {
+            let y1 = Math.min(pacY, beanY)
+            let y2 = Math.max(pacY, beanY)
+
             res = [true, false, true]
+
+            for (let i = y1; i < y2; i++) {
+                let index = i * MAP_WIDTH + pacX
+                if (MAP[index] === 0)
+                    res = [false]
+            }
         }
-
         return res
-
     }
+
 
     isOneLineY(pacX, beanX) {
         return pacX === beanX
@@ -349,7 +415,7 @@ export class Pacman {
             let beanCoordination = this.getBEANCoordinationByMapPositions(neighbors[i]),
                 beanX = beanCoordination[0],
                 beanY = beanCoordination[1],
-                val = this.heuristic(pacmanX, pacmanY, beanX, beanY)
+                val = -1 * this.heuristic(pacmanX, pacmanY, beanX, beanY)
 
             if (this.isOneLineY(pacmanX, beanX) || this.isOneLineX(pacmanY, beanY)) val++
 
@@ -486,17 +552,24 @@ export class Pacman {
     }
 
     getVertexesByPosition(posX, posY) {
-
+        // перевірити спочатку всі вершини
+        for (let i = 0; i < vertexes.length; i++) {
+            let currV = vertexes[i]
+            if (this.stayInVertexTop(posX, posY, currV)) {
+                return [currV]
+            }
+        }
+        // перевірити всершини - вершин (тобто всі ті вершини, що належать вершині А)
         for (let i = 0; i < adj.length; i++) {
             let currV = vertexes[i]
-            if (this.stayInVertexTop(posX, posX, currV)) {
-                return currV
-            }
+            if (this._score > score_const)
+                if (this.stayInVertexTop(posX, posY, currV)) {
+                    return [currV]
+                }
 
             for (let j = 0; j < adj[i].length; j++) {
                 let tempV = adj[i][j]
                 if (this.stayBetweenVertexes(posX, posY, currV, tempV)) {
-                    debugger
                     return [currV, tempV]
                 }
             }
