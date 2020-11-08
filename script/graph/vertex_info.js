@@ -1,4 +1,4 @@
-class VertexInfo {
+export class VertexInfo {
     /**
      *
      * @param {Vertex} parent

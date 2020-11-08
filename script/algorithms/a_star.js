@@ -1,3 +1,7 @@
+import {VertexInfo} from "../graph/vertex_info.js";
+
+
+
 /**
  * h(n) = estimated cost from nn to goal. This is the heuristic part of the cost function, so it is like a guess.
  * sqrt( (x1-x2)^2 + (y1-y2)^2 )
@@ -5,6 +9,7 @@
  * @param {Vertex} vertexB
  * @returns {number}
  */
+
 function _heuristic(vertexA, vertexB) {
     return Math.sqrt(Math.pow(vertexA.getX() - vertexB.getX(), 2) + Math.pow(vertexA.getY() - vertexB.getY(), 2))
 }

@@ -1,4 +1,4 @@
-class Ghost {
+export class Ghost {
     'use strict'
 
     _id = 0

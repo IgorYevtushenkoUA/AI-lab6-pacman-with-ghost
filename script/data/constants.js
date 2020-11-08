@@ -1,0 +1,9 @@
+export const MAP_WIDTH = 58,
+    MAP_HEIGHT = 17,
+    BEAN_RADIUS = 3,
+    WIDTH = 20,
+    HEIGHT = 20,
+    COLOR_ROAD = "black",
+    COLOR_BEAN = "white",
+    COLOR_WALL = "blue",
+    BEAN_CODE = 1

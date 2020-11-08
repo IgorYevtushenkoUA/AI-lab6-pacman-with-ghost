@@ -553,29 +553,20 @@ function welcomeScreen() {
 //update canvas for each frame.
 function updateCanvas() {
     restartTimer++;
-
-// ???????????
     eatBean();
     mrPacman.move();
-
-    // let x = copy_pacman.getX()
-    // let y = copy_pacman.getY()
-    //
-    // console.log("x :: " + x)
-    //
-    // debugger
-    // copy_pacman.doOneStep("LEFT", 5 * GRID_WIDTH + GRID_WIDTH / 2, y * GRID_HEIGHT + GRID_HEIGHT / 2)
-    //
-    // copy_pacman.setX(x - 1)
-    // console.log("x :: " + copy_pacman.getX())
-
-    // воно робить один крок просто через сталі значення воно не може робитикроки далі а так ніби завтра буде цікаво
 
     let x = copy_pacman.getX()
     let y = copy_pacman.getY()
     console.log(x)
-    copy_pacman.doOneStep("LEFT", x, pacmanStartLoc[0] * GRID_HEIGHT + GRID_HEIGHT / 2)
-    fixGrids()
+    if (x <= 10) {
+        console.log("if" + x)
+        copy_pacman.doOneStep("TOP", x, y)
+    } else {
+        console.log("else " + x)
+        copy_pacman.doOneStep("LEFT", x, y)
+    }
+    fixGrids(x,y)
     debugger
 
 
