@@ -1,3 +1,5 @@
+import {ctx} from "../game.js";
+
 export class Ghost {
     'use strict'
 
@@ -48,6 +50,23 @@ export class Ghost {
         ctx.fill();
     }
 
+    /**
+     1) знайти шлях до пакмена
+     2) коден четвертий вибір робити рандомним із тих що є
+     3)
+     */
+
+    buildPathToPacman(x, y,pacmanX,pacmanY) {
+        /**
+         * знайти вершину твою
+         * знайти вершину пакмена
+         * знайти шлях
+         */
+
+
+
+
+    }
 
     // move in current Vertex (todo here duplicate code xz may it norm but can improve xz xz)
     doOneStep(side, x, y){

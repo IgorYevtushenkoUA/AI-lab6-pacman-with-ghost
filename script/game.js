@@ -1,5 +1,5 @@
 import {BEAN_RADIUS, HEIGHT, MAP_HEIGHT, MAP_WIDTH, WIDTH} from "./data/constants.js";
-import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL,score_const} from "./data/constants.js";
+import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS} from "./data/constants.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 import {Pacman} from "./characters/pacman.js";
 import {MAP} from "./data/data_map.js";
@@ -74,10 +74,13 @@ function updateCanvas() {
 
 
     // pacman.doOneStep("RIGHT", x, y)
+    if (score === ALL_BEANS-1) {
+        alert("win")
+    }
+    debugger
+    eatBean(x, y)
     pacman.doSmartStep(x, y)
     pacman.draw()
-    // if (score > score_const) debugger
-    eatBean(x, y)
 
 }
 

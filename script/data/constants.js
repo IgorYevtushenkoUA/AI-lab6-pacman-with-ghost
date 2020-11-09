@@ -7,4 +7,4 @@ export const MAP_WIDTH = 58,
     COLOR_BEAN = "white",
     COLOR_WALL = "blue",
     BEAN_CODE = 1,
-    score_const = 84
+    ALL_BEANS = 310
