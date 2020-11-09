@@ -1,16 +1,14 @@
-import {BEAN_CODE, MAP_HEIGHT, MAP_WIDTH} from "../data/constants.js";
 import {HEIGHT, WIDTH} from "../data/constants.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
 import {adj, vertexes} from "../data/data_graphs.js";
-import {Vertex} from "../graph/vertex.js";
 import {MAP} from "../data/data_map.js";
 import {ctx} from "../game.js";
 import {
     doOneStep, findNearestBean, getBEANCoordinationByMapPositions,
     getDirFromVertex1ToVertex2,
-    getDistanceToVertex, getVertexesByPosition, hasNotWallBetweenPacmanAndBean,
+    getVertexesByPosition, hasNotWallBetweenPacmanAndBean,
     isSamePaths,
-    stayBetweenVertexes
+    stayBetweenVertexes,getNearestVertex
 } from "../data/moving.js";
 
 export class Pacman {
@@ -20,21 +18,17 @@ export class Pacman {
     _life = 0
     _eatenBeans = 0
     _score = 0
-    _speed = 0
     _radius = 0
-    _vertex = undefined // i`m not sure that i need this
 
     oldPath = []
 
-    constructor(x, y, life = 3, beans = 0, score = 0, speed = 5, radius = 8, vertex = 0) {
+    constructor(x, y, life = 3, beans = 0, score = 0, radius = 8) {
         this._posX = x
         this._posY = y
         this._life = life
         this._eatenBeans = beans
         this._score = 0
-        this._speed = speed
         this._radius = radius
-        this._vertex = getVertexesByPosition(x,y)
     }
 
     getX() {
@@ -47,14 +41,6 @@ export class Pacman {
 
     getLife() {
         return this._life
-    }
-
-    getSpeed() {
-        return this._speed
-    }
-
-    getVertex() {
-        return this._vertex
     }
 
     getEatenBean() {
@@ -75,14 +61,6 @@ export class Pacman {
 
     setLife(life) {
         this._life = life
-    }
-
-    setSpeed(s) {
-        this._speed = s
-    }
-
-    setVertex(v) {
-        this._vertex = v
     }
 
     setEatenBean(b) {
@@ -172,32 +150,11 @@ export class Pacman {
             console.log(beanVertex)
 
             // знахолимо найближчий кут для монетки БІНА
-            if (beanVertex.length === 1) {
-                beanNearestVertex = beanVertex[0]
-            } else {
-                beanNearestVertex = getDistanceToVertex(beanX, beanY, beanVertex[0]) <= getDistanceToVertex(beanX, beanY, beanVertex[1])
-                    ? beanVertex[0]
-                    : beanVertex[1]
-            }
+            beanNearestVertex = getNearestVertex(beanX, beanY, beanVertex)
+
             // знаходимо найближчу вершину для пакмена
-            try {
-                if (pacmanVertex.length === 1) {
-                    pacmanNearestVertex = pacmanVertex[0]
-                } else {
-                    pacmanNearestVertex = getDistanceToVertex(x, y, pacmanVertex[0]) <= getDistanceToVertex(x, y, pacmanVertex[1])
-                        ? pacmanVertex[0]
-                        : pacmanVertex[1]
-                }
-            } catch (e) {
-                console.log("this.oldPath")
-                console.log(this.oldPath)
-            }
-            /**
-             * тут помилка неправильна фінальна вершина вказується а потім якась діч відбувається
-             */
-
+            pacmanNearestVertex = getNearestVertex (x,y, pacmanVertex)
             if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
-
                 dir = getDirFromVertex1ToVertex2(x, y, beanNearestVertex)
             } else {
 
@@ -210,10 +167,6 @@ export class Pacman {
                 console.log("bfs_path")
                 console.log(bfs_path)
                 console.log("\n")
-
-
-                // todo можливо там не bfs_path[0] or bfs_path[1]
-
                 /**
                  * якщо стою на вершині то іду до другої вершини
                  * якщо стою між вершинами
@@ -222,14 +175,10 @@ export class Pacman {
                  */
 
                 if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
-                    // alert("stay in vertex")
-                    // todo тут воно обирає невірну вершину
-
                     dir = getDirFromVertex1ToVertex2(x, y, bfs_path[1])
                 }
                 // if stay between vertexes
                 else {
-                    // todo important! тут іде зацикленість
                     if (stayBetweenVertexes(x, y, bfs_path[0], bfs_path[1])) {
                         dir = getDirFromVertex1ToVertex2(x, y, bfs_path[1])
                     } else {
@@ -239,7 +188,6 @@ export class Pacman {
             }
             debugger
         }
-
 
         let step = doOneStep(dir, x, y)
         this._posX = step[0]

@@ -1,17 +1,19 @@
+import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS,BEAN_CODE} from "./data/constants.js";
 import {BEAN_RADIUS, HEIGHT, MAP_HEIGHT, MAP_WIDTH, WIDTH} from "./data/constants.js";
-import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS} from "./data/constants.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 import {Pacman} from "./characters/pacman.js";
 import {MAP} from "./data/data_map.js";
+import {Ghost} from "./characters/ghost.js";
 
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 55, startPacmanY = 1,
+let startPacmanX = 55, startPacmanY = 1, ghost1X = 1, ghost1Y = 1,
     score = 0,
     timerDelay = 20,
     intervalID,
-    pacman
+    pacman,
+    ghost1, ghost2
 
 
 function drawMap() {
@@ -49,6 +51,21 @@ function clearPacmanFootprint(x, y) {
     ctx.fillRect(x * WIDTH, y * HEIGHT, WIDTH, HEIGHT)
 }
 
+function clearGhostFootPrint(x, y) {
+    ctx.clearRect(x * WIDTH, y * HEIGHT, WIDTH, HEIGHT)
+
+    ctx.fillStyle = "black"
+    ctx.fillRect(x * WIDTH, y * HEIGHT, WIDTH, HEIGHT)
+    if (MAP[y * MAP_HEIGHT + x] === BEAN_CODE) {
+        ctx.fillStyle = COLOR_BEAN
+        ctx.beginPath();
+        ctx.arc(WIDTH * x + 10, HEIGHT * y + 10, BEAN_RADIUS, 0, 2 * Math.PI, true);
+        ctx.fill();
+    }
+
+}
+
+
 function canEatBean(x, y) {
     return MAP[y * MAP_WIDTH + x] === 1
 }
@@ -63,24 +80,29 @@ function eatBean(x, y) {
 
 function initCharacters() {
     pacman = new Pacman(startPacmanX, startPacmanY)
+    ghost1 = new Ghost(ghost1X, ghost1Y, "red")
     pacman.draw()
+    ghost1.draw()
 }
 
 function updateCanvas() {
 
     let x = pacman.getX(),
-        y = pacman.getY()
+        y = pacman.getY(),
+        g1X = ghost1.getX(),
+        g1Y = ghost1.getY()
+
     clearPacmanFootprint(x, y)
-
-
-    // pacman.doOneStep("RIGHT", x, y)
-    if (score === ALL_BEANS-1) {
+    clearGhostFootPrint(g1X, g1Y)
+    if (score === ALL_BEANS - 1) {
         alert("win")
     }
     debugger
     eatBean(x, y)
-    pacman.doSmartStep(x, y)
+    // pacman.doSmartStep(x, y)
     pacman.draw()
+    ghost1.doSmartStep(g1X, g1Y, x, y)
+    ghost1.draw()
 
 }
 

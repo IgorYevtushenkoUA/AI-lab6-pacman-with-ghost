@@ -1,7 +1,5 @@
-import {findShortestDist_BFS} from "./algorithms/bfs.js";
 import {MAP_HEIGHT, MAP_WIDTH} from "./data/constants.js";
 import {BEAN_CODE} from "./data/constants.js";
-import {Vertex} from "./graph/vertex.js";
 import {MAP} from "./data/data_map.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 
@@ -27,7 +25,6 @@ let map = [
     0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
     ]
-
 
 let score = 0
 
@@ -58,8 +55,6 @@ function hasNotWallBetweenPacmanAndBean(pacX, pacY, beanX, beanY) {
     }
     return res
 }
-
-console.log(hasNotWallBetweenPacmanAndBean(10,8,5,8))
 
 function findNearestBean(pacmanX, packmanY, map) {
     let generation = 0

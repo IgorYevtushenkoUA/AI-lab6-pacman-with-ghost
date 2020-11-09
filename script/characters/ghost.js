@@ -1,53 +1,81 @@
+import {findShortestDist_BFS} from "../algorithms/bfs.js";
+import {adj, vertexes} from "../data/data_graphs.js";
+import {HEIGHT, WIDTH} from "../data/constants.js";
 import {ctx} from "../game.js";
+import {
+    doOneStep,
+    getDirFromVertex1ToVertex2,
+    getIndexByVertexName,
+    getNearestVertex, getVertexesByPosition
+} from "../data/moving.js";
 
 export class Ghost {
     'use strict'
 
-    _id = 0
     _x = 0;
     _y = 0;
     _color = 0;
     _vertex = 0
     _radius = 0;
-    _speed = 0;
     _stepCounter = 0;
+    _old_path = []
 
-    constructor(id,xCord, yCord, gColor, vertex, radius, speed) {
-        this._id = id
+    constructor(xCord, yCord, gColor, radius = 8) {
         this._x = xCord;
         this._y = yCord;
         this._color = gColor;
-        this._vertex = vertex;
         this._radius = radius;
-        this._speed = speed;
         this._stepCounter = 0;
     }
 
-    getGhostID()        {return this._id}
-    getX()              {return this._x}
-    getY()              {return this._y}
-    gerColor()          {return this._color}
-    getVertex()         {return this._vertex}
-    getRadius()         {return this.radius}
-    getSpeed()          {return this._speed}
-    getStepCounter()    {return this._stepCounter}
+    getX() {
+        return this._x
+    }
 
-    setX(x)                 {this._x = x}
-    setY(y)                 {this._y = y}
-    setColor(color)         {this._color = c}
-    setVertex(v)            {this._vertex = v}
-    setRadius(r)            {this._radius = r}
-    setSpeed(s)             {this._speed = s}
-    setStepCounter(counter) {this._stepCounter = counter}
+    getY() {
+        return this._y
+    }
 
+    gerColor() {
+        return this._color
+    }
+
+    getVertex() {
+        return this._vertex
+    }
+
+    getStepCounter() {
+        return this._stepCounter
+    }
+
+    setX(x) {
+        this._x = x
+    }
+
+    setY(y) {
+        this._y = y
+    }
+
+    setColor(color) {
+        this._color = c
+    }
+
+    setRadius(r) {
+        this._radius = r
+    }
+
+    setStepCounter(counter) {
+        this._stepCounter = counter
+    }
 
 
     draw() {
         ctx.fillStyle = this._color;
-        ctx.beginPath();
-        ctx.arc(this._x, this._y, this._radius, Math.PI * 2, 0, false);
-        ctx.moveTo(this._x - this._radius, this._y);
-        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(this._x * WIDTH + 11, this._y * HEIGHT + 10, this._radius, 0, Math.PI * 2, true);
+        // xz
+        ctx.lineTo(this._x * WIDTH + 11, this._y * HEIGHT + 10)
+        ctx.fill()
     }
 
     /**
@@ -55,8 +83,7 @@ export class Ghost {
      2) коден четвертий вибір робити рандомним із тих що є
      3)
      */
-
-    buildPathToPacman(x, y,pacmanX,pacmanY) {
+    doSmartStep(x, y, pacmanX, pacmanY) {
         /**
          * знайти вершину твою
          * знайти вершину пакмена
@@ -64,33 +91,47 @@ export class Ghost {
          */
 
 
+        let ghostV = getVertexesByPosition(x, y)
+        let nearestGhostVertex = getNearestVertex(x, y, ghostV)
 
 
-    }
+        let dir
 
-    // move in current Vertex (todo here duplicate code xz may it norm but can improve xz xz)
-    doOneStep(side, x, y){
-        let newX, newY
-        switch (side) {
-            case "TOP" :
-                newX = x
-                newY = y - this._speed
-                break
-            case "RIGHT" :
-                newX = x + this._speed
-                newY = y
-                break
-            case "BOTTOM" :
-                newX = x
-                newY = y + this._speed
-                break
-            case "LEFT" :
-                newX = x -  this._speed
-                newY = y
-                break
+        /*
+         якщо стою на вершині
+            якщо крок ділиться націло на 4 то роблю рандомний крок
+            інакше перебудовую шлях
+
+         якщо спочатку стоїть між вершинами
+            якщо немає початкового шляху (загалом при створенні світу) шукаю найближчу вершину та йду до неї
+            якщо є шлях то йду до вершини за шляхом що вже складений нічого не вираховуючи
+         */
+
+        if (ghostV.length === 1) {
+            if (this._stepCounter % 4 === 0) {
+                let indexV = getIndexByVertexName(ghostV[0])
+                let randomV = Math.floor(Math.random() * adj[indexV].length)
+                this._old_path = [ghostV[0], adj[indexV][randomV]]
+                this._stepCounter++
+                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+            } else {
+                let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
+                let nearestPacmanVertex = getNearestVertex(x, y, pacmanV)
+
+                let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
+                this._old_path = bfs_path.slice(0)
+                this._stepCounter++
+                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+            }
+        } else {
+            if (this._old_path.length === 0) {
+                dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+            } else {
+                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+            }
         }
-        this._x = newX
-        this._y = newY
+        let step = doOneStep(dir, x, y)
+        this._x = step[0]
+        this._y = step[1]
     }
-
 }

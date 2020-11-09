@@ -328,6 +328,16 @@ export function getVertexesByPosition(posX, posY) {
     }
 }
 
+export function getNearestVertex(x, y, vertex) {
+    if (vertex.length === 1) return vertex[0]
+
+    return getDistanceToVertex(x, y, vertex[0]) <= getDistanceToVertex(x, y, vertex[1])
+        ? vertex[0]
+        : vertex[1]
+
+}
+
+
 /**
  * перевіряємо чи ОБ'ЄКТ стоїть на вершині (на перехресті доріг)
  * @param {number} posX
@@ -341,6 +351,20 @@ export function isStayInVertexTop(posX, posY, vertex) {
 }
 
 /**
+ * повертає вершину на якій ви знаходитеся
+ * @param {number} x
+ * @param {number} y
+ * @returns {undefined|Vertex}
+ */
+export function getVertexByPosition(x,y){
+    for(let i = 0 ; i < vertexes.length; i++)
+        if (vertexes[i].getX() === x && vertexes[i].getY() === y)
+            return vertexes[i]
+    return undefined
+}
+
+
+/**
  * перевіряємо чи ОБ'ЄКТ стоїть між вершинами А ти Б
  * @param {number} posX
  * @param {number} posY
@@ -348,16 +372,16 @@ export function isStayInVertexTop(posX, posY, vertex) {
  * @param {Vertex} vertex2
  */
 export function stayBetweenVertexes(posX, posY, vertex1, vertex2) {
-        let x1 = vertex1.getX(),
-            y1 = vertex1.getY(),
-            x2 = vertex2.getX(),
-            y2 = vertex2.getY(),
-            maxX = Math.max(x1, x2),
-            minX = Math.min(x1, x2),
-            maxY = Math.max(y1, y2),
-            minY = Math.min(y1, y2)
+    let x1 = vertex1.getX(),
+        y1 = vertex1.getY(),
+        x2 = vertex2.getX(),
+        y2 = vertex2.getY(),
+        maxX = Math.max(x1, x2),
+        minX = Math.min(x1, x2),
+        maxY = Math.max(y1, y2),
+        minY = Math.min(y1, y2)
 
-        return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
+    return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
 }
 
 /**
