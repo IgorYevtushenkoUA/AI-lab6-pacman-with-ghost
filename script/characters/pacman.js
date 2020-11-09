@@ -116,6 +116,7 @@ export class Pacman {
 
         let nearestBean = this.findNearestBean(x, y, MAP)
         let beanCoordinates = this.getBEANCoordinationByMapPositions(nearestBean)
+
         debugger
         let beanX = beanCoordinates[0], beanY = beanCoordinates[1]
         let obstaclesInTheWay = this.hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY)
@@ -146,12 +147,11 @@ export class Pacman {
                     // y++
                 }
             }
-
+            debugger
         }
         // якщо лежить у межах різних вершин
         else {
             localStorage.setItem('map', MAP)
-            console.log(MAP)
 
             let pacmanVertex = this.getVertexesByPosition(x, y)
             let beanVertex = this.getVertexesByPosition(beanX, beanY)
@@ -163,7 +163,6 @@ export class Pacman {
             console.log("beanX :: " + beanX + "\tbeanY :: " + beanY)
             console.log("beanVertex")
             console.log(beanVertex)
-
 
             // знахолимо найближчий кут для монетки БІНА
             if (beanVertex.length === 1) {
@@ -224,6 +223,7 @@ export class Pacman {
                     }
                 }
             }
+            debugger
         }
 
 
@@ -325,7 +325,7 @@ export class Pacman {
             res = [true, true, false]
 
             for (let i = x1; i < x2; i++) {
-                let index = i * MAP_WIDTH + pacX
+                let index = pacY * MAP_WIDTH + pacX
                 if (MAP[index] === 0)
                     res = [false]
             }
@@ -381,9 +381,11 @@ export class Pacman {
             isBean = neighbors.length > 0
         }
 
-        let bean_weight = this.countBeanWeight(pacmanX, pacmanY, neighbors)
-        let best_bean_position = Array.from(this.sortMap(bean_weight))
-        return best_bean_position[0][0]
+         let bean_weight = this.countBeanWeight(pacmanX, pacmanY, neighbors)
+         let best_bean_position = Array.from(this.sortMap(bean_weight))
+         return best_bean_position[0][0]
+        // debugger
+        // return neighbors[0]
     }
 
     /**
@@ -454,19 +456,19 @@ export class Pacman {
      */
     findNeighbor(generation, ceil, posX, posY) {
         function hasLeftNeighbors() {
-            return (posX - generation) >= 0
+            return (posX - generation) > 0
         }
 
         function hasRightNeighbors() {
-            return (posX - generation) <= MAP_WIDTH
+            return (posX + generation) < MAP_WIDTH
         }
 
         function hasTopNeighbors() {
-            return (posY - generation) >= 0
+            return (posY - generation) > 0
         }
 
         function hasBottomNeighbors() {
-            return (posY - generation) <= MAP_HEIGHT
+            return (posY + generation) < MAP_HEIGHT
         }
 
         function getLeftNeighbors() {
