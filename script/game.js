@@ -9,7 +9,7 @@ export let ctx = document.getElementById('pacman_game').getContext("2d")
 //   x * WIDTH + 11, y * WIDTH + 10
 let startPacmanX = 55, startPacmanY = 1,
     score = 0,
-    timerDelay = 100,
+    timerDelay = 20,
     intervalID,
     pacman
 

@@ -206,6 +206,14 @@ export class Pacman {
 
 
                 // todo можливо там не bfs_path[0] or bfs_path[1]
+
+                /**
+                 * якщо стою на вершині то іду до другої вершини
+                 * якщо стою між вершинами
+                 *      якщо стою між А та Б то іду до Б
+                 *      якщо не Стою між А та Б іду до А
+                 */
+
                 if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
                     // alert("stay in vertex")
                     // todo тут воно обирає невірну вершину
@@ -215,12 +223,16 @@ export class Pacman {
                 // if stay between vertexes
                 else {
                     // todo important! тут іде зацикленість
-
-                    if (!this.isSamePaths(this.oldPath, bfs_path)) {
-                        dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
-                    } else {
+                    if (this.stayBetweenVertexes(x,y,bfs_path[0], bfs_path[1])) {
                         dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+                    } else {
+                        dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
                     }
+                    // if (!this.isSamePaths(this.oldPath, bfs_path)) {
+                    //     dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[0])
+                    // } else {
+                    //     dir = this.getDirFromOneVertex1ToVertex2(x, y, bfs_path[1])
+                    // }
                 }
             }
             debugger
@@ -325,7 +337,7 @@ export class Pacman {
             res = [true, true, false]
 
             for (let i = x1; i < x2; i++) {
-                let index = pacY * MAP_WIDTH + pacX
+                let index = pacY * MAP_WIDTH + i
                 if (MAP[index] === 0)
                     res = [false]
             }
@@ -381,9 +393,9 @@ export class Pacman {
             isBean = neighbors.length > 0
         }
 
-         let bean_weight = this.countBeanWeight(pacmanX, pacmanY, neighbors)
-         let best_bean_position = Array.from(this.sortMap(bean_weight))
-         return best_bean_position[0][0]
+        let bean_weight = this.countBeanWeight(pacmanX, pacmanY, neighbors)
+        let best_bean_position = Array.from(this.sortMap(bean_weight))
+        return best_bean_position[0][0]
         // debugger
         // return neighbors[0]
     }
@@ -477,7 +489,7 @@ export class Pacman {
             if (hasLeftNeighbors()) {
                 let x = posX - generation
                 for (let y = posY - (ceil - 1) / 2, c = 0; c++ < ceil; y++) {
-                    if (y < 0) continue
+                    if (y < 0 || y >= MAP_HEIGHT) continue
 
                     let currentCeilNumber = y * MAP_WIDTH + x
                     neighbors.push(currentCeilNumber)
@@ -491,7 +503,7 @@ export class Pacman {
             if (hasRightNeighbors()) {
                 let x = posX + generation
                 for (let y = posY - (ceil - 1) / 2, c = 0; c++ < ceil; y++) {
-                    if (y < 0) continue
+                    if (y < 0 || y >= MAP_HEIGHT) continue
 
                     let currentCeilNumber = y * MAP_WIDTH + x
                     neighbors.push(currentCeilNumber)
@@ -505,7 +517,7 @@ export class Pacman {
             if (hasBottomNeighbors()) {
                 let y = posY + generation
                 for (let x = posX - (ceil - 1) / 2, c = 0; c++ < ceil; x++) {
-                    if (x < 0) continue
+                    if (x < 0 || x >= MAP_WIDTH) continue
 
                     let currentCeilNumber = y * MAP_WIDTH + x
                     neighbors.push(currentCeilNumber)
@@ -519,7 +531,7 @@ export class Pacman {
             if (hasTopNeighbors()) {
                 let y = posY - generation
                 for (let x = posX - (ceil - 1) / 2, c = 0; c++ < ceil; x++) {
-                    if (x < 0) continue
+                    if (x < 0 || x >= MAP_WIDTH ) continue
 
                     let currentCeilNumber = y * MAP_WIDTH + x
                     neighbors.push(currentCeilNumber)
@@ -595,16 +607,20 @@ export class Pacman {
      * @param {Vertex} vertex2
      */
     stayBetweenVertexes(posX, posY, vertex1, vertex2) {
+        try {
+            let x1 = vertex1.getX(),
+                y1 = vertex1.getY(),
+                x2 = vertex2.getX(),
+                y2 = vertex2.getY(),
+                maxX = Math.max(x1, x2),
+                minX = Math.min(x1, x2),
+                maxY = Math.max(y1, y2),
+                minY = Math.min(y1, y2)
 
-        let x1 = vertex1.getX(),
-            y1 = vertex1.getY(),
-            x2 = vertex2.getX(),
-            y2 = vertex2.getY(),
-            maxX = Math.max(x1, x2),
-            minX = Math.min(x1, x2),
-            maxY = Math.max(y1, y2),
-            minY = Math.min(y1, y2)
-        return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
+            return (posX <= maxX && posX >= minX) && (posY <= maxY && posY >= minY) && ((posX === x1 || posX === x2) || (posY === y1 || posY === y2))
+        } catch (e) {
+            debugger
+        }
     }
 
 
