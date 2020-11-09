@@ -56,7 +56,7 @@ function clearGhostFootPrint(x, y) {
 
     ctx.fillStyle = "black"
     ctx.fillRect(x * WIDTH, y * HEIGHT, WIDTH, HEIGHT)
-    if (MAP[y * MAP_HEIGHT + x] === BEAN_CODE) {
+    if (MAP[y * MAP_WIDTH + x] === BEAN_CODE) {
         ctx.fillStyle = COLOR_BEAN
         ctx.beginPath();
         ctx.arc(WIDTH * x + 10, HEIGHT * y + 10, BEAN_RADIUS, 0, 2 * Math.PI, true);
@@ -97,7 +97,6 @@ function updateCanvas() {
     if (score === ALL_BEANS - 1) {
         alert("win")
     }
-    debugger
     eatBean(x, y)
     // pacman.doSmartStep(x, y)
     pacman.draw()

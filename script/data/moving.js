@@ -53,6 +53,7 @@ export function isEqualVertexes(v1, v2) {
  * @returns {string}
  */
 export function getDirFromVertex1ToVertex2(x, y, v2) {
+    // try {
     let dir = ""
     if (x < v2.getX())
         dir = "RIGHT"
@@ -62,6 +63,31 @@ export function getDirFromVertex1ToVertex2(x, y, v2) {
         dir = "TOP"
     else if (y < v2.getY())
         dir = "BOTTOM"
+    return dir
+    // } catch (e) {
+    //     debugger
+    // }
+}
+
+export function getDirFromPosition1ToPosition2(x1, y1, x2, y2) {
+    let dir = ""
+    if (x1 < x2)
+        dir = "RIGHT"
+    else if (x1 > x2)
+        dir = "LEFT"
+    else if (y1 > y2)
+        dir = "TOP"
+    else if (y1 < y2)
+        dir = "BOTTOM"
+    return dir
+}
+
+export function getDirFromPosition1ToVertex2(x, y, v) {
+    let dir = ""
+    if (x < v.getX()) dir = "RIGHT"
+    else if (x > v.getX()) dir = "LEFT"
+    else if (y > v.getY()) dir = "TOP"
+    else if (y < v.getY()) dir = "BOTTOM"
     return dir
 }
 
@@ -120,6 +146,17 @@ export function isOneLineY(pacX, beanX) {
 export function isOneLineX(pacY, beanY) {
     return pacY === beanY
 }
+
+/**
+ * цей метод для перевірки чи вершини не однакові та чи вони не з'єднані
+ * @param {Vertex} v1
+ * @param {Vertex} v2
+ */
+export function isStayInOneLine(v1, v2) {
+    let indexV = getIndexByVertexName(v1)
+    return adj[indexV].includes(v2)
+}
+
 
 //1) Знайти найближчий крекер
 /**
@@ -328,9 +365,16 @@ export function getVertexesByPosition(posX, posY) {
     }
 }
 
+/**
+ *
+ * @param x
+ * @param y
+ * @param vertex
+ * @returns {Vertex}
+ */
 export function getNearestVertex(x, y, vertex) {
     if (vertex.length === 1) return vertex[0]
-
+    debugger
     return getDistanceToVertex(x, y, vertex[0]) <= getDistanceToVertex(x, y, vertex[1])
         ? vertex[0]
         : vertex[1]
@@ -356,8 +400,8 @@ export function isStayInVertexTop(posX, posY, vertex) {
  * @param {number} y
  * @returns {undefined|Vertex}
  */
-export function getVertexByPosition(x,y){
-    for(let i = 0 ; i < vertexes.length; i++)
+export function getVertexByPosition(x, y) {
+    for (let i = 0; i < vertexes.length; i++)
         if (vertexes[i].getX() === x && vertexes[i].getY() === y)
             return vertexes[i]
     return undefined

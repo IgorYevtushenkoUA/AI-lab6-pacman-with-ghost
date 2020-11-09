@@ -102,7 +102,6 @@ export class Pacman {
         let nearestBean = findNearestBean(x, y, MAP)
         let beanCoordinates = getBEANCoordinationByMapPositions(nearestBean)
 
-        debugger
         let beanX = beanCoordinates[0], beanY = beanCoordinates[1]
         let obstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY)
         let dir = ""
@@ -132,7 +131,6 @@ export class Pacman {
                     // y++
                 }
             }
-            debugger
         }
         // якщо лежить у межах різних вершин
         else {
@@ -186,7 +184,6 @@ export class Pacman {
                     }
                 }
             }
-            debugger
         }
 
         let step = doOneStep(dir, x, y)

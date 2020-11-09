@@ -6,8 +6,10 @@ import {
     doOneStep,
     getDirFromVertex1ToVertex2,
     getIndexByVertexName,
-    getNearestVertex, getVertexesByPosition
+    getNearestVertex, getVertexesByPosition, isStayInOneLine, getDirFromPosition1ToPosition2,
+    getDirFromPosition1ToVertex2, isEqualVertexes
 } from "../data/moving.js";
+
 
 export class Ghost {
     'use strict'
@@ -89,49 +91,57 @@ export class Ghost {
          * знайти вершину пакмена
          * знайти шлях
          */
-
-
         let ghostV = getVertexesByPosition(x, y)
+        let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
+        debugger
         let nearestGhostVertex = getNearestVertex(x, y, ghostV)
-
-
+        let nearestPacmanVertex = getNearestVertex(x, y, pacmanV)
         let dir
 
-        /*
-         якщо стою на вершині
-            якщо крок ділиться націло на 4 то роблю рандомний крок
-            інакше перебудовую шлях
-
-         якщо спочатку стоїть між вершинами
-            якщо немає початкового шляху (загалом при створенні світу) шукаю найближчу вершину та йду до неї
-            якщо є шлях то йду до вершини за шляхом що вже складений нічого не вираховуючи
-         */
-
-        if (ghostV.length === 1) {
-            if (this._stepCounter % 4 === 0) {
-                let indexV = getIndexByVertexName(ghostV[0])
-                let randomV = Math.floor(Math.random() * adj[indexV].length)
-                this._old_path = [ghostV[0], adj[indexV][randomV]]
-                this._stepCounter++
-                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
-            } else {
-                let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
-                let nearestPacmanVertex = getNearestVertex(x, y, pacmanV)
-
-                let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
-                this._old_path = bfs_path.slice(0)
-                this._stepCounter++
-                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
-            }
+        if (x === pacmanX && y === pacmanY) {
+            alert("ghost catch pacman")
+            return
+        } else if (isEqualVertexes(nearestGhostVertex, nearestPacmanVertex)) {
+            dir = getDirFromPosition1ToPosition2(x, y, pacmanX, pacmanY)
+        } else if (isStayInOneLine(nearestGhostVertex, nearestPacmanVertex)) {
+            dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
         } else {
-            if (this._old_path.length === 0) {
-                dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+            /*
+             якщо стою на вершині
+                якщо крок ділиться націло на 4 то роблю рандомний крок
+                інакше перебудовую шлях
+
+             якщо спочатку стоїть між вершинами
+                якщо немає початкового шляху (загалом при створенні світу) шукаю найближчу вершину та йду до неї
+                якщо є шлях то йду до вершини за шляхом що вже складений нічого не вираховуючи
+             */
+
+            if (ghostV.length === 1) {
+                if (this._stepCounter % 4 === 0) {
+                    let indexV = getIndexByVertexName(ghostV[0])
+                    let randomV = Math.floor(Math.random() * adj[indexV].length)
+                    this._old_path = [ghostV[0], adj[indexV][randomV]]
+                    this._stepCounter++
+                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                } else {
+
+
+                    let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
+                    this._old_path = bfs_path.slice(0)
+                    this._stepCounter++
+                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                }
             } else {
-                dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                if (this._old_path.length === 0) {
+                    dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+                } else {
+                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                }
             }
         }
         let step = doOneStep(dir, x, y)
         this._x = step[0]
         this._y = step[1]
+        debugger
     }
 }

@@ -2,9 +2,15 @@ import {MAP_HEIGHT, MAP_WIDTH} from "./data/constants.js";
 import {BEAN_CODE} from "./data/constants.js";
 import {MAP} from "./data/data_map.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
+import {getIndexByVertexName, isEqualVertexes} from "./data/moving.js";
 
 fillADJ()
 
+function isStayInOneLine(v1,v2) {
+    if (isEqualVertexes(v1,v2)) return true
+    let indexV = getIndexByVertexName(v1)
+    return adj[indexV].includes(v2)
+}
 
 let map = [
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
