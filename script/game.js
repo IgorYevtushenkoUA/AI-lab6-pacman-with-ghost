@@ -1,4 +1,4 @@
-import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS,BEAN_CODE} from "./data/constants.js";
+import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS, BEAN_CODE} from "./data/constants.js";
 import {BEAN_RADIUS, HEIGHT, MAP_HEIGHT, MAP_WIDTH, WIDTH} from "./data/constants.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 import {Pacman} from "./characters/pacman.js";
@@ -56,12 +56,14 @@ function clearGhostFootPrint(x, y) {
 
     ctx.fillStyle = "black"
     ctx.fillRect(x * WIDTH, y * HEIGHT, WIDTH, HEIGHT)
-    if (MAP[y * MAP_HEIGHT + x] === BEAN_CODE) {
+    if (MAP[y * MAP_WIDTH + x] === BEAN_CODE) {
         ctx.fillStyle = COLOR_BEAN
         ctx.beginPath();
         ctx.arc(WIDTH * x + 10, HEIGHT * y + 10, BEAN_RADIUS, 0, 2 * Math.PI, true);
         ctx.fill();
+        debugger
     }
+    debugger
 
 }
 
@@ -97,7 +99,6 @@ function updateCanvas() {
     if (score === ALL_BEANS - 1) {
         alert("win")
     }
-    debugger
     eatBean(x, y)
     // pacman.doSmartStep(x, y)
     pacman.draw()
