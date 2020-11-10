@@ -4,7 +4,7 @@ import {HEIGHT, WIDTH} from "../data/constants.js";
 import {ctx} from "../game.js";
 import {
     doOneStep,
-    getDirFromVertex1ToVertex2,
+    getDirFromPosition1ToVertex2,
     getIndexByVertexName,
     getNearestVertex, getVertexesByPosition, isStayInOneLine, getDirFromPosition1ToPosition2,
     getDirFromPosition1ToVertex2, isEqualVertexes, isOneLineX, isOneLineY
@@ -101,21 +101,6 @@ export class Ghost {
         усі інші варіанти
 
          */
-        // todo тут не вистачаэ рандомного кроку привида, у моменты коли вын женеться за пакменом та стоїть на вершині
-        if (x === pacmanX && y === pacmanY) {
-            alert("ghost catch pacman")
-            // debugger
-            return
-        }
-            // else if (isEqualVertexes(nearestGhostVertex, nearestPacmanVertex)) {
-            //     if (isOneLineX(y, pacmanY) || isOneLineY(x, pacmanX))
-            //         dir = getDirFromPosition1ToPosition2(x, y, pacmanX, pacmanY)
-            //     else
-            //         dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
-            // } else if (isStayInOneLine(nearestGhostVertex, nearestPacmanVertex)) {
-            //     dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
-        // }
-        else {
             /*
              якщо стою на вершині
                 якщо крок ділиться націло на 4 то роблю рандомний крок
@@ -132,28 +117,27 @@ export class Ghost {
                     let randomV = Math.floor(Math.random() * adj[indexV].length)
                     this._old_path = [ghostV[0], adj[indexV][randomV]]
                     this._stepCounter++
-                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                    dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
                 } else {
                     let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                     this._old_path = bfs_path.slice(0)
                     this._stepCounter++
                     if (bfs_path === "can not find the path")
-                        dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+                        dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
                     else
-                        dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                        dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
                 }
             } else {
                 if (this._old_path.length === 0) {
-                    dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+                    dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
                 } else {
-                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                    dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
                 }
             }
-        }
+
         if (dir === undefined) return
         let step = doOneStep(dir, x, y)
         this._x = step[0]
         this._y = step[1]
-        // debugger
     }
 }

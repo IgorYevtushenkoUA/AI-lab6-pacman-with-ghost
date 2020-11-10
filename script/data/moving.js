@@ -3,6 +3,13 @@ import {MAP} from "./data_map.js";
 import {adj, vertexes} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
 
+/*
+todo можливо дописати позицыю СТОП до варыантыв повороту (вправо вліво)
+todo зробити універсальний поворот (бо в мене є свіча із поворотами (вершина вершина та інші) просто один метод яки залежно від того які там дані буде брати координати та все змінювати)
+todo
+ */
+
+
 /**
  * зробити один крок
  * @param side
@@ -47,26 +54,22 @@ export function isEqualVertexes(v1, v2) {
 
 /**
  *
- * @param {nubmer} x
- * @param {nubmer} y
+ * @param {Vertex} v1
  * @param {Vertex} v2
  * @returns {string}
  */
-export function getDirFromVertex1ToVertex2(x, y, v2) {
+export function getDirFromVertex1ToVertex2(v1, v2) {
     // try {
     let dir = ""
-    if (x < v2.getX())
+    if (v1.getX() < v2.getX())
         dir = "RIGHT"
-    else if (x > v2.getX())
+    else if (v1.getX() > v2.getX())
         dir = "LEFT"
-    else if (y > v2.getY())
+    else if (v1.getY() > v2.getY())
         dir = "TOP"
-    else if (y < v2.getY())
+    else if (v1.getY() < v2.getY())
         dir = "BOTTOM"
     return dir
-    // } catch (e) {
-    //     debugger
-    // }
 }
 
 export function getDirFromPosition1ToPosition2(x1, y1, x2, y2) {
@@ -480,7 +483,13 @@ export function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, 
     return allPath
 }
 
-
+/**
+ * знаходидь мінімаксний шлях
+ * @param s
+ * @param dest
+ * @param ghost1V
+ * @returns {*}
+ */
 export function findMimimaxPath(s, dest, ghost1V) {
     // minMAXPath = findMaxOfMinPath(findMinPath(countAllPathWeight(buildPathMap(s),getAllPath(s, dest),ghost1V)))
 
@@ -492,6 +501,12 @@ export function findMimimaxPath(s, dest, ghost1V) {
     return minMAXPath
 }
 
+/**
+ * знаходить всі можливі шляхи із точки А в точку Б (інколи там є повтори)todo виправити це
+ * @param s
+ * @param dest
+ * @returns {[]}
+ */
 function getAllPath(s, dest) {
     let isVisited = [], allPath = []
     for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
@@ -499,6 +514,14 @@ function getAllPath(s, dest) {
     return allPath
 }
 
+/**
+ * будує "ДЕРЕВО(MAP)-ШЛЯХІВ" із з'єднаннь головного графу
+ * Приклад : є вершина А, яка з'єднана із Б,В,Г,Д
+ * це значить що наше "дерево" містить три листки
+ * дерево* - це абстрактне поняття - не те дерево що поістинні вважається деревом в програмування
+ * @param source
+ * @returns {Map<any, any>}
+ */
 function buildPathMap(source) {
     let path_map = new Map()
     let index = getIndexByVertexName(source)
@@ -508,6 +531,18 @@ function buildPathMap(source) {
     return path_map
 }
 
+/**
+ * рахує вагу шляху
+ * # кількість розгалужень(звёяхкыв) кожноъ вершини
+ * # чи не пересікається вершина із привидом (якщо ні то нічого, якщо так то шлях стає від'ємним)
+ * ---- МІНУСИ ----
+ * не враховується у пересіканні із привидом через скільки кроків пересічеться,
+ * та якщо пакмен буде на тій(небезпечній вершині) чи буде там сам привид
+ * @param path_map
+ * @param allPath
+ * @param ghost1V
+ * @returns {*}
+ */
 function countAllPathWeight(path_map, allPath, ghost1V) {
     for (let i = 0; i < allPath.length; i++) {
         let v2 = allPath[i][1]
@@ -519,6 +554,11 @@ function countAllPathWeight(path_map, allPath, ghost1V) {
     return path_map
 }
 
+/**
+ *
+ * @param path_map
+ * @returns {[]}
+ */
 function findMinPath(path_map) {
     let minPaths = []
     let keys = Array.from(path_map.keys())
@@ -557,6 +597,11 @@ function findMinPath(path_map) {
     return minPaths
 }
 
+/**
+ *
+ * @param minPaths
+ * @returns {*}
+ */
 function findMaxOfMinPath(minPaths) {
     let max = minPaths[0]
     for (let i = 1; i < minPaths; i++) {
@@ -588,3 +633,84 @@ function countPathWeight(path, ghost1Path) {
     return weight
 }
 
+/**
+ * перевіряє чи шлях є безпечним
+ * @param {Vertex} beanV
+ * @param {Vertex} ghostV
+ * @returns {boolean}
+ */
+export function isSafeStep(beanV, ghostV) {
+    return isBeanPositionSafe(beanV, ghostV)
+}
+
+/**
+ * перевіряє чи BEAN безпечний аби до нього йти
+ * @param {Vertex} beanV
+ * @param {Vertex} ghostV
+ * @returns {boolean}
+ */
+function isBeanPositionSafe(beanV, ghostV) {
+    // якщо вершини де привид да bean однакові то потрібно тікати
+    if (isEqualVertexes(beanV, ghostV)) return false
+    //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
+    let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
+    return bfsPathGhost2BeanV.length <= 3
+}
+
+
+/** метод що формує шлях для утікання від привида
+ * !!!!ВАЖЛИВО!!!! пакмен та привид ніколи не мають бути на одній вершині --- тоді алгоритм BFS - ламається
+ * @param {Vertex} pacmanV
+ * @param {Vertex} ghostV
+ * @returns {[*]}
+ */
+export function pacmanRunAway(pacmanV, ghostV) {
+    let path = [pacmanV], isVisited = []
+
+    for (let i = 0; i < vertexes.length; i++)
+        isVisited[i] = false
+
+    isVisited[ghostV.getID()] = true
+    isVisited[pacmanV.getID()] = true
+
+    let deep = 1
+    let mainVertex = path[0]
+    while (deep < 5 && path.length > 0) {
+        let wasAdded = false
+        for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
+            let currentVertex = adj[mainVertex.getID()][i]
+            if (isEqualVertexes(currentVertex, ghostV)) continue
+            if (isVisited[currentVertex.getID()] === true) continue
+
+            isVisited[currentVertex.getID()] = true
+            path.push(currentVertex)
+            deep++
+            wasAdded = true
+            mainVertex = currentVertex
+        }
+        if (!wasAdded) {
+            path.pop()
+            deep--
+            isVisited[mainVertex.getID()] = false
+        }
+    }
+    return path
+}
+
+/**
+ * знаходимо найближчу безпечнуу вершину
+ * @param {Vertex} pacmanV
+ * @param {Vertex} ghost1V
+ * @returns {[]}
+ */
+export function findNearestSafeVertex(pacmanV, ghost1V) {
+    let vertex = []
+    for (let i = 0; i < adj[pacmanV.getID()]; i++) {
+        let currentV = adj[pacmanV.getID()][i]
+        if (currentV.getID() === ghost1V.getID()) continue
+
+        vertex.push(currentV)
+        break
+    }
+    return vertex
+}

@@ -5,11 +5,12 @@ import {MAP} from "../data/data_map.js";
 import {ctx} from "../game.js";
 import {
     doOneStep, findNearestBean, getBEANCoordinationByMapPositions,
-    getDirFromVertex1ToVertex2,
+    getDirFromPosition1ToVertex2,
     getVertexesByPosition, hasNotWallBetweenPacmanAndBean,
-    isSamePaths,
+    isSamePaths, isEqualVertexes,
     stayBetweenVertexes, getNearestVertex,
- isEqualVertexes,findMimimaxPath} from "../data/moving.js";
+    findMimimaxPath, isSafeStep, pacmanRunAway, findNearestSafeVertex
+} from "../data/moving.js";
 
 export class Pacman {
     'use strict'
@@ -97,107 +98,106 @@ export class Pacman {
         ctx.fill()
     }
 
-    doSmartStep(x, y, ghost1V) {
+    doSmartStep(x, y, g1x, g1y) {
 
         let nearestBean = findNearestBean(x, y, MAP),
             beanCoordinates = getBEANCoordinationByMapPositions(nearestBean),
             beanX = beanCoordinates[0],
             beanY = beanCoordinates[1],
-            obstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
+            noObstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
             dir = "",
             pacmanVertex = getVertexesByPosition(x, y),
             beanVertex = getVertexesByPosition(beanX, beanY),
+            ghost1V = getVertexesByPosition(g1x, g1y),
             beanNearestVertex = getNearestVertex(beanX, beanY, beanVertex),
             pacmanNearestVertex = getNearestVertex(x, y, pacmanVertex),
-            isVisited = [],
-            allPath = [],
-            prefix = []
+            ghost1NearestVertex = getNearestVertex(g1x, g1y, ghost1V)
 
-        for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
-
-        if (isEqualVertexes(pacmanNearestVertex, beanNearestVertex)) {
-            // треба зробити перевірку на привида чи релевантно туди йти ?
-            //     чи краще зробити обхід
-            // if (stay pacman and bean in one line) {
-            //     do step to
-            // }else {}
-        } else {
-            // якщо лежить в одному напрямку без перешкод
-            // todo додати перевырку на привида
-            if (obstaclesInTheWay[0]) {
-
+        // якщо лежить в одному напрямку без перешкод
+        if (noObstaclesInTheWay[0]) {
+            if (isSafeStep(beanNearestVertex, ghost1NearestVertex)) {
                 // go by X
-                if (obstaclesInTheWay[1]) {
-                    if (beanX < x) {
-                        // x--
-                        dir = "LEFT"
-                    } else {
-                        dir = "RIGHT"
-                        // x++
-                    }
+                if (noObstaclesInTheWay[1]) {
+                    if (beanX < x) dir = "LEFT"
+                    else dir = "RIGHT"
                 }
                 // go by Y
-                else if (obstaclesInTheWay[2]) {
-                    if (beanY < y) {
-                        dir = "TOP"
-                        // y--
-                    } else {
-                        dir = "BOTTOM"
-                        // y++
-                    }
+                else if (noObstaclesInTheWay[2]) {
+                    if (beanY < y) dir = "TOP"
+                    else dir = "BOTTOM"
                 }
-            }
-            // якщо лежить у межах різних вершин
-            else {
-                localStorage.setItem('map', MAP)
-                console.log("pacX :: " + x + "\tpacY :: " + y)
-                console.log("pacmanVertex ::::    (length)   " + pacmanVertex)
-                console.log(pacmanVertex)
-                console.log("beanX :: " + beanX + "\tbeanY :: " + beanY)
-                console.log("beanVertex")
-                console.log(beanVertex)
-
-
-                if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
-                    dir = getDirFromVertex1ToVertex2(x, y, beanNearestVertex)
+            } else {
+                if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
+                    let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
+                    if (safeV.length === 0) {
+                        // you have problems todo !!!!!!!!!!!
+                        //     dir = ????????????????????? куди робити крок ?
+                    } else {
+                        dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
+                    }
                 } else {
-
-                    // let bfs_path = findMimimaxPath(pacmanNearestVertex, beanNearestVertex, ghost1V)
-                    let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
-
-                    if (this.oldPath.length === 0) this.oldPath = bfs_path
-                    else if (!isSamePaths(this.oldPath, bfs_path)) {
-                        this.oldPath = bfs_path
-                    }
-                    console.log("bfs_path")
-                    console.log(bfs_path)
-                    console.log("\n")
-                    /**
-                     * якщо стою на вершині то іду до другої вершини
-                     * якщо стою між вершинами
-                     *      якщо стою між А та Б то іду до Б
-                     *      якщо не Стою між А та Б іду до А
-                     */
-
-                    if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
-                        dir = getDirFromVertex1ToVertex2(x, y, bfs_path[1])
-                    }
-                    // if stay between vertexes
-                    else {
-                        if (stayBetweenVertexes(x, y, bfs_path[0], bfs_path[1])) {
-                            dir = getDirFromVertex1ToVertex2(x, y, bfs_path[1])
-                        } else {
-                            dir = getDirFromVertex1ToVertex2(x, y, bfs_path[0])
+                    let safe_path = pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
+                    if (safe_path.length === 0) {
+                        // you have no  free way
+                    } else {
+                        let vertexes = getVertexesByPosition(x, y)
+                        if (vertexes.length === 1) {
+                            dir = getDi4rFromVertex1ToVertex2(safe_path[0], safe_path[1])
                         }
                     }
                 }
             }
-
-            let step = doOneStep(dir, x, y)
-            this._posX = step[0]
-            this._posY = step[1]
         }
+        // якщо лежить у межах різних вершин
+        else {
+            localStorage.setItem('map', MAP)
+            console.log("pacX :: " + x + "\tpacY :: " + y)
+            console.log("pacmanVertex ::::    (length)   " + pacmanVertex)
+            console.log(pacmanVertex)
+            console.log("beanX :: " + beanX + "\tbeanY :: " + beanY)
+            console.log("beanVertex")
+            console.log(beanVertex)
+
+            if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
+                // todo тут тупі кроки їх треба зробити розумними (вони нічого не аналізують)
+                dir = getDirFromPosition1ToVertex2(x, y, beanNearestVertex)
+            } else {
+
+                let bfs_path = findMimimaxPath(pacmanNearestVertex, beanNearestVertex, ghost1V)[0]
+                // let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
+                debugger
+
+                if (this.oldPath.length === 0) this.oldPath = bfs_path
+                else if (!isSamePaths(this.oldPath, bfs_path)) {
+                    this.oldPath = bfs_path
+                }
+                console.log("bfs_path")
+                console.log(bfs_path)
+                console.log("\n")
+                /**
+                 * якщо стою на вершині то іду до другої вершини
+                 * якщо стою між вершинами
+                 *      якщо стою між А та Б то іду до Б
+                 *      якщо не Стою між А та Б іду до А
+                 */
+
+                if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
+                    dir = getDirFromPosition1ToVertex2(x, y, bfs_path[1])
+                }
+                // if stay between vertexes
+                else {
+                    if (stayBetweenVertexes(x, y, bfs_path[0], bfs_path[1])) {
+                        dir = getDirFromPosition1ToVertex2(x, y, bfs_path[1])
+                    } else {
+                        dir = getDirFromPosition1ToVertex2(x, y, bfs_path[0])
+                    }
+                }
+            }
+        }
+
+        let step = doOneStep(dir, x, y)
+        this._posX = step[0]
+        this._posY = step[1]
+        // }
     }
-
-
 }

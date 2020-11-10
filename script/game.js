@@ -1,4 +1,4 @@
-import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS,BEAN_CODE} from "./data/constants.js";
+import {COLOR_BEAN, COLOR_ROAD, COLOR_WALL, ALL_BEANS, BEAN_CODE} from "./data/constants.js";
 import {BEAN_RADIUS, HEIGHT, MAP_HEIGHT, MAP_WIDTH, WIDTH} from "./data/constants.js";
 import {adj, vertexes, fillADJ} from "./data/data_graphs.js";
 import {Pacman} from "./characters/pacman.js";
@@ -8,9 +8,9 @@ import {Ghost} from "./characters/ghost.js";
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 55, startPacmanY = 1, ghost1X = 1, ghost1Y = 1,
+let startPacmanX = 1, startPacmanY = 15, ghost1X = 1, ghost1Y = 1,
     score = 0,
-    timerDelay = 20,
+    timerDelay = 300,
     intervalID,
     pacman,
     ghost1, ghost2
@@ -100,11 +100,12 @@ function updateCanvas() {
     }
     eatBean(x, y)
 
-    pacman.doSmartStep(x, y)
-    pacman.draw()
 
-    ghost1.doSmartStep(g1X, g1Y, x, y)
-    ghost1.draw()
+        ghost1.doSmartStep(g1X, g1Y, x, y)
+        ghost1.draw()
+
+    pacman.doSmartStep(x, y, g1X, g1Y)
+    pacman.draw()
 
 
 }

@@ -4,6 +4,7 @@ import {fillADJ} from "./data/data_graphs.js";
 import {vertexes} from "./data/data_graphs.js";
 import {adj} from "./data/data_graphs.js";
 import {getVertexesByPosition} from "./data/moving.js";
+import {isEqualVertexes} from "./data/moving.js";
 
 
 fillADJ()
@@ -135,11 +136,51 @@ function countPathWeight(path, ghost1Path) {
     return weight
 }
 
-
-console.log(max)
-
-/*
-
+/**
+ * метод що формує шлях для утікання від привида
+ * @param {Vertex} pacmanV
+ * @param {Vertex} ghostV
+ * @returns {[*]}
  */
+function pacmanRunAway(pacmanV, ghostV) {
+    let path = [pacmanV],
+        isVisited = []
 
+    for (let i = 0; i < vertexes.length; i++) {
+        isVisited[i] = false
+    }
+
+    isVisited[ghostV.getID()] = true
+    isVisited[pacmanV.getID()] = true
+
+    let deep = 1
+    let mainVertex = path[0]
+    while(deep < 5 && path.length > 0){
+        let wasAdded = false
+        for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
+            let currentVertex = adj[mainVertex.getID()][i]
+            if (isEqualVertexes(currentVertex, ghostV)) continue
+            // if (path.includes(adj[index][i])) continue
+            if (isVisited[currentVertex.getID()] === true) continue
+
+            isVisited[currentVertex.getID()] = true
+            path.push(currentVertex)
+            deep++
+            wasAdded = true
+            mainVertex = currentVertex
+        }
+        if (!wasAdded) {
+            path.pop()
+            deep--
+            isVisited[mainVertex.getID()] = false
+        }
+    }
+
+
+
+    // getWay(path, pacmanV, ghostV, isVisited, 0)
+    return path
+}
+
+console.log(pacmanRunAway(vertexes[9], vertexes[5]))
 
