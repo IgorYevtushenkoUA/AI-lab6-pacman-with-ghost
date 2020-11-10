@@ -94,14 +94,18 @@ function updateCanvas() {
 
     clearPacmanFootprint(x, y)
     clearGhostFootPrint(g1X, g1Y)
-    if (score === ALL_BEANS - 1) {
+    if (score === ALL_BEANS) {
         alert("win")
+        return
     }
     eatBean(x, y)
-    // pacman.doSmartStep(x, y)
+
+    pacman.doSmartStep(x, y)
     pacman.draw()
+
     ghost1.doSmartStep(g1X, g1Y, x, y)
     ghost1.draw()
+
 
 }
 

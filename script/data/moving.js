@@ -2,7 +2,6 @@ import {MAP_HEIGHT, MAP_WIDTH} from "./constants.js";
 import {MAP} from "./data_map.js";
 import {adj, vertexes} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
-
 /**
  * зробити один крок
  * @param side
@@ -373,12 +372,16 @@ export function getVertexesByPosition(posX, posY) {
  * @returns {Vertex}
  */
 export function getNearestVertex(x, y, vertex) {
-    if (vertex.length === 1) return vertex[0]
-    debugger
-    return getDistanceToVertex(x, y, vertex[0]) <= getDistanceToVertex(x, y, vertex[1])
-        ? vertex[0]
-        : vertex[1]
+    try {
+        if (vertex.length === 1) return vertex[0]
 
+        return getDistanceToVertex(x, y, vertex[0]) <= getDistanceToVertex(x, y, vertex[1])
+            ? vertex[0]
+            : vertex[1]
+
+    } catch (e) {
+        debugger
+    }
 }
 
 

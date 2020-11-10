@@ -7,7 +7,7 @@ import {
     getDirFromVertex1ToVertex2,
     getIndexByVertexName,
     getNearestVertex, getVertexesByPosition, isStayInOneLine, getDirFromPosition1ToPosition2,
-    getDirFromPosition1ToVertex2, isEqualVertexes
+    getDirFromPosition1ToVertex2, isEqualVertexes, isOneLineX, isOneLineY
 } from "../data/moving.js";
 
 
@@ -80,32 +80,42 @@ export class Ghost {
         ctx.fill()
     }
 
-    /**
-     1) знайти шлях до пакмена
-     2) коден четвертий вибір робити рандомним із тих що є
-     3)
-     */
     doSmartStep(x, y, pacmanX, pacmanY) {
-        /**
-         * знайти вершину твою
-         * знайти вершину пакмена
-         * знайти шлях
-         */
+
         let ghostV = getVertexesByPosition(x, y)
         let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
         debugger
+        if (ghostV === undefined || pacmanV === undefined) {
+            debugger
+        }
         let nearestGhostVertex = getNearestVertex(x, y, ghostV)
         let nearestPacmanVertex = getNearestVertex(x, y, pacmanV)
         let dir
 
+        /*
+        якщо пакмен та привид мають однакові координати то пакмен програв
+        якщо пакмен та привид має однакову наближчу вершину
+            якщо привид знаходиться на одній лінії з пакменом ---- робить крок до пакмена
+            якщо вони мають схожу вершину але не осі абсцис та ординат --- то привид робить крок до привида
+        якщо стоять на одній лінії  то робить крок на зустріч пакмену
+        усі інші варіанти
+
+         */
+        // todo тут не вистачаэ рандомного кроку привида, у моменты коли вын женеться за пакменом та стоїть на вершині
         if (x === pacmanX && y === pacmanY) {
             alert("ghost catch pacman")
+            // debugger
             return
-        } else if (isEqualVertexes(nearestGhostVertex, nearestPacmanVertex)) {
-            dir = getDirFromPosition1ToPosition2(x, y, pacmanX, pacmanY)
-        } else if (isStayInOneLine(nearestGhostVertex, nearestPacmanVertex)) {
-            dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
-        } else {
+        }
+            // else if (isEqualVertexes(nearestGhostVertex, nearestPacmanVertex)) {
+            //     if (isOneLineX(y, pacmanY) || isOneLineY(x, pacmanX))
+            //         dir = getDirFromPosition1ToPosition2(x, y, pacmanX, pacmanY)
+            //     else
+            //         dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
+            // } else if (isStayInOneLine(nearestGhostVertex, nearestPacmanVertex)) {
+            //     dir = getDirFromPosition1ToVertex2(x, y, nearestPacmanVertex)
+        // }
+        else {
             /*
              якщо стою на вершині
                 якщо крок ділиться націло на 4 то роблю рандомний крок
@@ -124,12 +134,13 @@ export class Ghost {
                     this._stepCounter++
                     dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
                 } else {
-
-
                     let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                     this._old_path = bfs_path.slice(0)
                     this._stepCounter++
-                    dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
+                    if (bfs_path === "can not find the path")
+                        dir = getDirFromVertex1ToVertex2(x, y, nearestGhostVertex)
+                    else
+                        dir = getDirFromVertex1ToVertex2(x, y, this._old_path[1])
                 }
             } else {
                 if (this._old_path.length === 0) {
@@ -139,9 +150,10 @@ export class Ghost {
                 }
             }
         }
+        if (dir === undefined) return
         let step = doOneStep(dir, x, y)
         this._x = step[0]
         this._y = step[1]
-        debugger
+        // debugger
     }
 }
