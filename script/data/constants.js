@@ -7,4 +7,5 @@ export const MAP_WIDTH = 58,
     COLOR_BEAN = "white",
     COLOR_WALL = "blue",
     BEAN_CODE = 1,
-    ALL_BEANS = 309
+    ALL_BEANS = 309,
+    RANDOM_STEP = 8

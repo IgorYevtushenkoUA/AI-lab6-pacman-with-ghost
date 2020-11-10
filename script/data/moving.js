@@ -1,6 +1,6 @@
 import {MAP_HEIGHT, MAP_WIDTH} from "./constants.js";
 import {MAP} from "./data_map.js";
-import {adj, vertexes} from "./data_graphs.js";
+import {adj, vertexes, fillADJ} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
 
 /*
@@ -9,6 +9,7 @@ todo зробити універсальний поворот (бо в мене 
 todo
  */
 
+fillADJ()
 
 /**
  * зробити один крок
@@ -396,9 +397,13 @@ export function getNearestVertex(x, y, vertex) {
  * @param {Vertex} vertex
  */
 export function isStayInVertexTop(posX, posY, vertex) {
-    let x = vertex.getX(),
-        y = vertex.getY()
-    return x === posX && y === posY
+    try {
+        let x = vertex.getX(),
+            y = vertex.getY()
+        return x === posX && y === posY
+    } catch (e) {
+        debugger
+    }
 }
 
 /**
@@ -654,9 +659,8 @@ function isBeanPositionSafe(beanV, ghostV) {
     if (isEqualVertexes(beanV, ghostV)) return false
     //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
     let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
-    return bfsPathGhost2BeanV.length <= 3
+    return bfsPathGhost2BeanV.length >= 3
 }
-
 
 /** метод що формує шлях для утікання від привида
  * !!!!ВАЖЛИВО!!!! пакмен та привид ніколи не мають бути на одній вершині --- тоді алгоритм BFS - ламається

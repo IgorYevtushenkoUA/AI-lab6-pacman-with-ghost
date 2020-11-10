@@ -9,7 +9,7 @@ import {
     getVertexesByPosition, hasNotWallBetweenPacmanAndBean,
     isSamePaths, isEqualVertexes,
     stayBetweenVertexes, getNearestVertex,
-    findMimimaxPath, isSafeStep, pacmanRunAway, findNearestSafeVertex
+    findMimimaxPath, isSafeStep, pacmanRunAway, findNearestSafeVertex, getDirFromVertex1ToVertex2
 } from "../data/moving.js";
 
 export class Pacman {
@@ -126,23 +126,38 @@ export class Pacman {
                     if (beanY < y) dir = "TOP"
                     else dir = "BOTTOM"
                 }
-            } else {
+                debugger
+            }
+            // це означає що bean - лежить в небезпечному місці і не треба туди йти
+            else {
                 if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
+                    debugger
                     let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
                     if (safeV.length === 0) {
+                        debugger
                         // you have problems todo !!!!!!!!!!!
+                        alert("you have no variant ; ghost catch you")
                         //     dir = ????????????????????? куди робити крок ?
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
+                        debugger
                     }
                 } else {
+                    debugger
                     let safe_path = pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
                     if (safe_path.length === 0) {
+                        debugger
+                        alert("you have no variant ; ghost catch you")
                         // you have no  free way
                     } else {
+                        debugger
                         let vertexes = getVertexesByPosition(x, y)
                         if (vertexes.length === 1) {
-                            dir = getDi4rFromVertex1ToVertex2(safe_path[0], safe_path[1])
+                            dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
+                            debugger
+                        } else {
+                            dir = getDirFromPosition1ToVertex2(x,y,pacmanNearestVertex)
+                            debugger
                         }
                     }
                 }

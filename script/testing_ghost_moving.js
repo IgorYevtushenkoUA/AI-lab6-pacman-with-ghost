@@ -182,5 +182,25 @@ function pacmanRunAway(pacmanV, ghostV) {
     return path
 }
 
-console.log(pacmanRunAway(vertexes[9], vertexes[5]))
 
+
+export function isSafeStep(beanV, ghostV) {
+    return isBeanPositionSafe(beanV, ghostV)
+}
+
+/**
+ * перевіряє чи BEAN безпечний аби до нього йти
+ * @param {Vertex} beanV
+ * @param {Vertex} ghostV
+ * @returns {boolean}
+ */
+function isBeanPositionSafe(beanV, ghostV) {
+    // якщо вершини де привид да bean однакові то потрібно тікати
+    if (isEqualVertexes(beanV, ghostV)) return false
+    //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
+    let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
+    console.log(bfsPathGhost2BeanV)
+    return bfsPathGhost2BeanV.length >= 3
+}
+
+console.log(isSafeStep(vertexes[20], vertexes[0]))
