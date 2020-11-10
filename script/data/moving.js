@@ -38,6 +38,13 @@ export function doOneStep(side, x, y) {
             newX = x - 1
             newY = y
             break
+// position STOP
+        case "STOP" :
+            newX = x
+            newY = y
+        default :
+            newX = x
+            newY = y
     }
     return [newX, newY]
 }
@@ -70,6 +77,9 @@ export function getDirFromVertex1ToVertex2(v1, v2) {
         dir = "TOP"
     else if (v1.getY() < v2.getY())
         dir = "BOTTOM"
+    else {
+        dir = "STOP"
+    }
     return dir
 }
 
@@ -83,6 +93,9 @@ export function getDirFromPosition1ToPosition2(x1, y1, x2, y2) {
         dir = "TOP"
     else if (y1 < y2)
         dir = "BOTTOM"
+    else {
+        dir = "STOP"
+    }
     return dir
 }
 
@@ -92,6 +105,7 @@ export function getDirFromPosition1ToVertex2(x, y, v) {
     else if (x > v.getX()) dir = "LEFT"
     else if (y > v.getY()) dir = "TOP"
     else if (y < v.getY()) dir = "BOTTOM"
+    else {dir = "STOP"}
     return dir
 }
 

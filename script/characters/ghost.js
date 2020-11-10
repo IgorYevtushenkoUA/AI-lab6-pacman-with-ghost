@@ -117,6 +117,8 @@ export class Ghost {
                 this._stepCounter++
                 if (bfs_path === "can not find the path") {
                     alert("if (bfs_path === can not find the path")
+                    // якщо стоїть на вершині (яка є і вершиною найближчою пакмена та привида) то ламається бо дір повертає невідомо тому
+
                     dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex) // nearestPacmanVertex -> was  nearestGhostVertex
                     debugger
                 } else {
