@@ -207,6 +207,10 @@ export function heuristic(x, y, x2, y2) {
     return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2))
 }
 
+function heuristicVertex(vertexA, vertexB) {
+    return Math.sqrt(Math.pow(vertexA.getX() - vertexB.getX(), 2) + Math.pow(vertexA.getY() - vertexB.getY(), 2))
+}
+
 /**
  * рахує вагу ккожного БІНА (КРЕКЕРА)
  * @param pacmanX
@@ -642,24 +646,58 @@ function countPathWeight(path, ghost1Path) {
  * перевіряє чи шлях є безпечним
  * @param {Vertex} beanV
  * @param {Vertex} ghostV
+ * @param {number} x
+ * @param {number} y
+ * @param {number} g1x
+ * @param {number} g1y
  * @returns {boolean}
  */
-export function isSafeStep(beanV, ghostV) {
-    return isBeanPositionSafe(beanV, ghostV)
+export function isSafeStep(beanV, ghostV,x, y, g1x, g1y) {
+    return isBeanPositionSafe(beanV, ghostV,x, y, g1x, g1y)
 }
 
 /**
  * перевіряє чи BEAN безпечний аби до нього йти
  * @param {Vertex} beanV
  * @param {Vertex} ghostV
+ * @param {number} x
+ * @param {number} y
+ * @param {number} g1x
+ * @param {number} g1y
  * @returns {boolean}
  */
-function isBeanPositionSafe(beanV, ghostV) {
+function isBeanPositionSafe(beanV, ghostV,x, y, g1x, g1y) {
     // якщо вершини де привид да bean однакові то потрібно тікати
     if (isEqualVertexes(beanV, ghostV)) return false
     //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
     let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
     return bfsPathGhost2BeanV.length >= 3
+        // || sumOfSteps(bfsPathGhost2BeanV,x, y, g1x, g1y) >= 7
+}
+
+/**
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {number} g1x
+ * @param {number} g1y
+ * @returns {number}
+ */
+function sumOfSteps(path, x, y, g1x, g1y){
+
+
+    let sum = 0
+    for(let i = 0 ; i < path.length -1; i++){
+        sum+= heuristicVertex(path[i], path[i+1])
+    }
+
+    if (isS)
+
+    sum -= heuristic(g1x,g1y,path[0].getX(), path[0].getY())
+    sum -= heuristic(x,y,path[path.length-1].getX(), path[path.length-1].getY())
+
+    alert("  | sum = " + sum)
+    return sum
 }
 
 /** метод що формує шлях для утікання від привида
@@ -709,7 +747,7 @@ export function pacmanRunAway(pacmanV, ghostV) {
  */
 export function findNearestSafeVertex(pacmanV, ghost1V) {
     let vertex = []
-    for (let i = 0; i < adj[pacmanV.getID()]; i++) {
+    for (let i = 0; i < adj[pacmanV.getID()].length; i++) {
         let currentV = adj[pacmanV.getID()][i]
         if (currentV.getID() === ghost1V.getID()) continue
 

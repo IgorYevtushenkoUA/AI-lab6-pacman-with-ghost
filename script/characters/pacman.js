@@ -115,7 +115,12 @@ export class Pacman {
 
         // якщо лежить в одному напрямку без перешкод
         if (noObstaclesInTheWay[0]) {
-            if (isSafeStep(beanNearestVertex, ghost1NearestVertex)) {
+
+            // if (pacmanSafePosition){
+            //
+            // }
+
+            if (isSafeStep(beanNearestVertex, ghost1NearestVertex, x, y, g1x, g1y)) {
                 // go by X
                 if (noObstaclesInTheWay[1]) {
                     if (beanX < x) dir = "LEFT"
@@ -136,7 +141,7 @@ export class Pacman {
                     if (safeV.length === 0) {
                         debugger
                         // you have problems todo !!!!!!!!!!!
-                        alert("you have no variant ; ghost catch you")
+                        alert("you have no variant ; ghost catch you 1")
                         //     dir = ????????????????????? куди робити крок ?
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
@@ -147,8 +152,7 @@ export class Pacman {
                     let safe_path = pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
                     if (safe_path.length === 0) {
                         debugger
-                        alert("you have no variant ; ghost catch you")
-                        // you have no  free way
+                        alert("you have no variant ; ghost catch you 2")
                     } else {
                         debugger
                         let vertexes = getVertexesByPosition(x, y)

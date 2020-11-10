@@ -203,4 +203,15 @@ function isBeanPositionSafe(beanV, ghostV) {
     return bfsPathGhost2BeanV.length >= 3
 }
 
-console.log(isSafeStep(vertexes[20], vertexes[0]))
+function findNearestSafeVertex(pacmanV, ghost1V) {
+    let vertex = []
+    for (let i = 0; i < adj[pacmanV.getID()].length; i++) {
+        let currentV = adj[pacmanV.getID()][i]
+        if (currentV.getID() === ghost1V.getID()) continue
+
+        vertex.push(currentV)
+        break
+    }
+    return vertex
+}
+console.log(findNearestSafeVertex(vertexes[4], vertexes[4]))
