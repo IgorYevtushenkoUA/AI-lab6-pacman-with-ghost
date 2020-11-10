@@ -2,6 +2,7 @@ import {MAP_HEIGHT, MAP_WIDTH} from "./constants.js";
 import {MAP} from "./data_map.js";
 import {adj, vertexes} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
+
 /**
  * зробити один крок
  * @param side
@@ -478,3 +479,112 @@ export function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, 
     }
     return allPath
 }
+
+
+export function findMimimaxPath(s, dest, ghost1V) {
+    // minMAXPath = findMaxOfMinPath(findMinPath(countAllPathWeight(buildPathMap(s),getAllPath(s, dest),ghost1V)))
+
+    let allPath = getAllPath(s, dest)
+    let path_map = buildPathMap(s)
+    path_map = countAllPathWeight(path_map, allPath, ghost1V)
+    let minPath = findMinPath(path_map)
+    let minMAXPath = findMaxOfMinPath(minPath)
+    return minMAXPath
+}
+
+function getAllPath(s, dest) {
+    let isVisited = [], allPath = []
+    for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
+    findAllPathFromSourceToDestination(s, dest, isVisited, allPath, [])
+    return allPath
+}
+
+function buildPathMap(source) {
+    let path_map = new Map()
+    let index = getIndexByVertexName(source)
+    for (let i = 0; i < adj[index].length; i++) {
+        path_map.set(adj[index][i].getName(), [])
+    }
+    return path_map
+}
+
+function countAllPathWeight(path_map, allPath, ghost1V) {
+    for (let i = 0; i < allPath.length; i++) {
+        let v2 = allPath[i][1]
+        let path_weight = countPathWeight(allPath[i], ghost1V)
+        let oldVal = path_map.get(v2.getName())
+        oldVal.push([allPath[i], path_weight])
+        path_map.set(v2.getName(), oldVal)
+    }
+    return path_map
+}
+
+function findMinPath(path_map) {
+    let minPaths = []
+    let keys = Array.from(path_map.keys())
+    // find min from positive agruments
+    for (let k = 0; k < keys.length; k++) {
+        let min = Number.MAX_SAFE_INTEGER
+        let index = -1
+
+        for (let i = 0; i < path_map.get(keys[k]).length; i++) {
+            let obj = path_map.get(keys[k])[i]
+            let w = obj[1]
+            if (w > 0 && w < min) {
+                min = w
+                index = i
+            }
+        }
+        if (index !== -1) minPaths.push(path_map.get(keys[k])[index])
+    }
+    // find min from negative arguments
+    if (minPaths.length === 0) {
+        for (let k = 0; k < keys.length; k++) {
+            let min = 0
+            let index = 0
+
+            for (let i = 0; i < path_map.get(keys[k]).length; i++) {
+                let obj = path_map.get(keys[k])[i]
+                let w = obj[1]
+                if (w < min) {
+                    min = w
+                    index = i
+                }
+            }
+            minPaths.push(path_map.get(keys[k])[index])
+        }
+    }
+    return minPaths
+}
+
+function findMaxOfMinPath(minPaths) {
+    let max = minPaths[0]
+    for (let i = 1; i < minPaths; i++) {
+        if (minPaths[i][1] > max[1])
+            max = minPaths[i]
+    }
+    return max
+}
+
+/**
+ *
+ * @param {Vertex[]} path
+ * @param {Vertex[]} ghost1Path
+ * по кількості можливих розгалуджень
+ по шляху привида
+ */
+function countPathWeight(path, ghost1Path) {
+    let weight = 0
+    // кількість розгалуджень
+    for (let i = 0; i < path.length; i++) {
+        let index = getIndexByVertexName(path[i])
+        weight += adj[index].length
+    }
+    // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
+    for (let i = 0; i < ghost1Path.length; i++)
+        if (path.includes(ghost1Path[i]))
+            weight *= -1
+
+    return weight
+}
+

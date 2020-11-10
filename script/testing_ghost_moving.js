@@ -3,6 +3,7 @@ import {findShortestDist_BFS} from "./algorithms/bfs.js";
 import {fillADJ} from "./data/data_graphs.js";
 import {vertexes} from "./data/data_graphs.js";
 import {adj} from "./data/data_graphs.js";
+import {getVertexesByPosition} from "./data/moving.js";
 
 
 fillADJ()
@@ -64,7 +65,7 @@ for (let i = 0; i < adj[index].length; i++) {
 }
 for (let i = 0; i < allPath.length; i++) {
     let v2 = allPath[i][1]
-    let path_weight = i
+    let path_weight = countPathWeight(allPath[i], [vertexes[4]])
     let oldVal = path_hash.get(v2.getName())
     oldVal.push([allPath[i], path_weight])
     path_hash.set(v2.getName(), oldVal)
@@ -72,22 +73,73 @@ for (let i = 0; i < allPath.length; i++) {
 
 let minPaths = []
 let keys = Array.from(path_hash.keys())
+// find min from positive agruments
 for (let k = 0; k < keys.length; k++) {
-    let min = 0
-    index = 0
+    let min = Number.MAX_SAFE_INTEGER
+    index = -1
+
     for (let i = 0; i < path_hash.get(keys[k]).length; i++) {
         let obj = path_hash.get(keys[k])[i]
         let w = obj[1]
-        if (w < min)
+        if (w > 0 && w < min) {
+            min = w
             index = i
+        }
     }
-    minPaths.push(path_hash.get(keys[k])[index])
+    if (index !== -1) minPaths.push(path_hash.get(keys[k])[index])
+}
+
+// find min from negative arguments
+if (minPaths.length === 0) {
+    for (let k = 0; k < keys.length; k++) {
+        let min = 0
+        index = 0
+
+        for (let i = 0; i < path_hash.get(keys[k]).length; i++) {
+            let obj = path_hash.get(keys[k])[i]
+            let w = obj[1]
+            if (w < min) {
+                min = w
+                index = i
+            }
+        }
+        minPaths.push(path_hash.get(keys[k])[index])
+    }
 }
 
 let max = minPaths[0]
-for (let i = 1 ; i < minPaths;i++){
+for (let i = 1; i < minPaths; i++) {
     if (minPaths[i][1] > max[1])
         max = minPaths[i]
 }
+
+/**
+ *
+ * @param {Vertex[]} path
+ * @param {Vertex[]} ghost1Path
+ * по кількості можливих розгалуджень
+ по шляху привида
+ */
+function countPathWeight(path, ghost1Path) {
+    let weight = 0
+    // кількість розгалуджень
+    for (let i = 0; i < path.length; i++) {
+        let index = getIndexByVertexName(path[i])
+        weight += adj[index].length
+    }
+    // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
+    for (let i = 0; i < ghost1Path.length; i++)
+        if (path.includes(ghost1Path[i]))
+            weight *= -1
+
+    return weight
+}
+
+
 console.log(max)
-// console.log(minPaths)
+
+/*
+
+ */
+
+
