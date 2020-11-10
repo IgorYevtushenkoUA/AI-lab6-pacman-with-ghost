@@ -5,6 +5,7 @@ import {vertexes} from "./data/data_graphs.js";
 import {adj} from "./data/data_graphs.js";
 import {getVertexesByPosition} from "./data/moving.js";
 import {isEqualVertexes} from "./data/moving.js";
+import {heuristic} from "./data/moving.js";
 
 
 fillADJ()
@@ -155,7 +156,7 @@ function pacmanRunAway(pacmanV, ghostV) {
 
     let deep = 1
     let mainVertex = path[0]
-    while(deep < 5 && path.length > 0){
+    while (deep < 5 && path.length > 0) {
         let wasAdded = false
         for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
             let currentVertex = adj[mainVertex.getID()][i]
@@ -177,11 +178,9 @@ function pacmanRunAway(pacmanV, ghostV) {
     }
 
 
-
     // getWay(path, pacmanV, ghostV, isVisited, 0)
     return path
 }
-
 
 
 export function isSafeStep(beanV, ghostV) {
@@ -214,4 +213,21 @@ function findNearestSafeVertex(pacmanV, ghost1V) {
     }
     return vertex
 }
-console.log(findNearestSafeVertex(vertexes[4], vertexes[4]))
+
+
+function characterDistanceToVertex(x, y, vertexes, nearestVertex, path, i1, i2) {
+    if (vertexes.length === 1) return 0
+    if (isEqualVertexes(vertexes[0], path[i1]) && isEqualVertexes(vertexes[1], path[i2])
+        || isEqualVertexes(vertexes[0], path[i2]) && isEqualVertexes(vertexes[1], path[i1]))
+        return -1 * heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
+    return heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
+}
+
+let x = 5,
+    y = 4,
+    vertex = [vertexes[2], vertexes[3]],
+    nearestVertex = vertexes[3],
+    path = [vertexes[3], vertexes[2]],
+    i1 = 0,
+    i2 = 1
+console.log(characterDistanceToVertex(x, y, vertex, nearestVertex, path, vertex.length-1, vertex.length-2))

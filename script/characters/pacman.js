@@ -9,7 +9,8 @@ import {
     getVertexesByPosition, hasNotWallBetweenPacmanAndBean,
     isSamePaths, isEqualVertexes,
     stayBetweenVertexes, getNearestVertex,
-    findMimimaxPath, isSafeStep, pacmanRunAway, findNearestSafeVertex, getDirFromVertex1ToVertex2
+    findMimimaxPath, pacmanRunAway, findNearestSafeVertex, getDirFromVertex1ToVertex2,
+    isSafePosition
 } from "../data/moving.js";
 
 export class Pacman {
@@ -115,12 +116,18 @@ export class Pacman {
 
         // якщо лежить в одному напрямку без перешкод
         if (noObstaclesInTheWay[0]) {
+            let pacmanSafePosition = isSafePosition(x, y, pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
+            let beanSafePosition = isSafePosition(beanX, beanY, beanVertex, beanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
 
-            // if (pacmanSafePosition){
-            //
+            // if (pacmanSafePosition && beanSafePosition) {
+            //     // do step to bean
+            // } else if (pacmanSafePosition && !beanSafePosition) {
+            //     // xz go to neaxt vertex
+            // } else if (!pacmanSafePosition) {
+            //     // go to nearest safe position
             // }
 
-            if (isSafeStep(beanNearestVertex, ghost1NearestVertex, x, y, g1x, g1y)) {
+            if (pacmanSafePosition && beanSafePosition) {
                 // go by X
                 if (noObstaclesInTheWay[1]) {
                     if (beanX < x) dir = "LEFT"
@@ -132,9 +139,7 @@ export class Pacman {
                     else dir = "BOTTOM"
                 }
                 debugger
-            }
-            // це означає що bean - лежить в небезпечному місці і не треба туди йти
-            else {
+            } else {
                 if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
                     debugger
                     let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
@@ -142,7 +147,7 @@ export class Pacman {
                         debugger
                         // you have problems todo !!!!!!!!!!!
                         alert("you have no variant ; ghost catch you 1")
-                        //     dir = ????????????????????? куди робити крок ?
+                        dir = "STOP"
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
                         debugger
@@ -153,6 +158,7 @@ export class Pacman {
                     if (safe_path.length === 0) {
                         debugger
                         alert("you have no variant ; ghost catch you 2")
+                        dir = "STOP"
                     } else {
                         debugger
                         let vertexes = getVertexesByPosition(x, y)
@@ -160,12 +166,18 @@ export class Pacman {
                             dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
                             debugger
                         } else {
-                            dir = getDirFromPosition1ToVertex2(x,y,pacmanNearestVertex)
+                            dir = getDirFromPosition1ToVertex2(x, y, pacmanNearestVertex)
                             debugger
                         }
                     }
                 }
             }
+            // todo розглянути варіанти нижче
+            // else if (pacmanSafePosition && !beanSafePosition) {
+            //     alert("pacmanSafePosition && !beanSafePosition")
+            // } else if (!pacmanSafePosition) {
+            // }
+
         }
         // якщо лежить у межах різних вершин
         else {

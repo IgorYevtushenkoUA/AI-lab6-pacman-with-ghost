@@ -96,6 +96,7 @@ function updateCanvas() {
     clearGhostFootPrint(g1X, g1Y)
 
     if (ghost1X === x && ghost1Y === y) {
+        debugger
         alert("ghost kill pacman")
     }
 

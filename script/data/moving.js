@@ -1,4 +1,4 @@
-import {MAP_HEIGHT, MAP_WIDTH} from "./constants.js";
+import {MAP_HEIGHT, MAP_WIDTH,SAFE_NUM_OF_STEPS} from "./constants.js";
 import {MAP} from "./data_map.js";
 import {adj, vertexes, fillADJ} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
@@ -38,13 +38,10 @@ export function doOneStep(side, x, y) {
             newX = x - 1
             newY = y
             break
-// position STOP
         case "STOP" :
             newX = x
             newY = y
-        default :
-            newX = x
-            newY = y
+            break
     }
     return [newX, newY]
 }
@@ -105,7 +102,9 @@ export function getDirFromPosition1ToVertex2(x, y, v) {
     else if (x > v.getX()) dir = "LEFT"
     else if (y > v.getY()) dir = "TOP"
     else if (y < v.getY()) dir = "BOTTOM"
-    else {dir = "STOP"}
+    else {
+        dir = "STOP"
+    }
     return dir
 }
 
@@ -657,37 +656,67 @@ function countPathWeight(path, ghost1Path) {
 }
 
 /**
- * перевіряє чи шлях є безпечним
- * @param {Vertex} beanV
- * @param {Vertex} ghostV
- * @param {number} x
- * @param {number} y
- * @param {number} g1x
- * @param {number} g1y
+ * перевіряє чи позиція ОБ'ЄКТА А - є безпечною
+ * @param {number} characterX
+ * @param {number} characterY
+ * @param {[Vertex]}characterV
+ * @param {Vertex} characterNearestV
+ * @param {number} ghostX
+ * @param {number} ghostY
+ * @param {[Vertex]} ghostV
+ * @param {Vertex} nearestGhostV
  * @returns {boolean}
  */
-export function isSafeStep(beanV, ghostV,x, y, g1x, g1y) {
-    return isBeanPositionSafe(beanV, ghostV,x, y, g1x, g1y)
+export function isSafePosition(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV) {
+    if (isEqualVertexes(characterNearestV, nearestGhostV)) return false
+    let bfsPathFromGhost2Pacman = findShortestDist_BFS(adj, nearestGhostV, characterNearestV, vertexes.length)
+    if (bfsPathFromGhost2Pacman.length === 2) return false
+    return bfsPathFromGhost2Pacman.length >= 3 || isSafeStepsDistances(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV, bfsPathFromGhost2Pacman)
 }
 
 /**
- * перевіряє чи BEAN безпечний аби до нього йти
- * @param {Vertex} beanV
- * @param {Vertex} ghostV
+ * перевіряє чи достатня кількість безпечних кроків між А та Б
  * @param {number} x
  * @param {number} y
- * @param {number} g1x
- * @param {number} g1y
+ * @param {[Vertex]} v
+ * @param {Vertex} nearestV
+ * @param {number} x1
+ * @param {number} y1
+ * @param {[Vertex]} v2
+ * @param {Vertex} nearestV2
+ * @param {[Vertex]} path
  * @returns {boolean}
  */
-function isBeanPositionSafe(beanV, ghostV,x, y, g1x, g1y) {
-    // якщо вершини де привид да bean однакові то потрібно тікати
-    if (isEqualVertexes(beanV, ghostV)) return false
-    //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
-    let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
-    return bfsPathGhost2BeanV.length >= 3
-        // || sumOfSteps(bfsPathGhost2BeanV,x, y, g1x, g1y) >= 7
+function isSafeStepsDistances(x, y, v, nearestV, x1, y1, v2, nearestV2, path) {
+    let stepDist = 0
+    for (let i = 0; i < path.length - 1; i++) {
+        stepDist += heuristicVertex(path[i], path[i + 1])
+    }
+
+    stepDist += characterDistanceToVertex(x, y, v, nearestV, path, path.length - 1, path.length - 2)
+    stepDist += characterDistanceToVertex(x1, y1, v2, nearestV2, path, 0, 1)
+    return stepDist >= SAFE_NUM_OF_STEPS
 }
+
+/**
+ * рахує відстань у кроках до вершини
+ * @param {number} x
+ * @param {number}y
+ * @param {[Vertex]} vertexes
+ * @param {Vertex} nearestVertex
+ * @param {[Vertex]} path
+ * @param {number} i1
+ * @param {number} i2
+ * @returns {number}
+ */
+function characterDistanceToVertex(x, y, vertexes, nearestVertex, path, i1, i2) {
+    if (vertexes.length === 1) return 0
+    if (isEqualVertexes(vertexes[0], path[i1]) && isEqualVertexes(vertexes[1], path[i2])
+        || isEqualVertexes(vertexes[0], path[i2]) && isEqualVertexes(vertexes[1], path[i1]))
+        return -1 * heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
+    return heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
+}
+
 
 /**
  *
@@ -697,18 +726,16 @@ function isBeanPositionSafe(beanV, ghostV,x, y, g1x, g1y) {
  * @param {number} g1y
  * @returns {number}
  */
-function sumOfSteps(path, x, y, g1x, g1y){
+function sumOfSteps(path, x, y, g1x, g1y) {
 
 
     let sum = 0
-    for(let i = 0 ; i < path.length -1; i++){
-        sum+= heuristicVertex(path[i], path[i+1])
+    for (let i = 0; i < path.length - 1; i++) {
+        sum += heuristicVertex(path[i], path[i + 1])
     }
 
-    if (isS)
-
-    sum -= heuristic(g1x,g1y,path[0].getX(), path[0].getY())
-    sum -= heuristic(x,y,path[path.length-1].getX(), path[path.length-1].getY())
+    sum -= heuristic(g1x, g1y, path[0].getX(), path[0].getY())
+    sum -= heuristic(x, y, path[path.length - 1].getX(), path[path.length - 1].getY())
 
     alert("  | sum = " + sum)
     return sum
