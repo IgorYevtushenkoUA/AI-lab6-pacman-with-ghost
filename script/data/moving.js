@@ -1,4 +1,4 @@
-import {MAP_HEIGHT, MAP_WIDTH,SAFE_NUM_OF_STEPS} from "./constants.js";
+import {MAP_HEIGHT, MAP_WIDTH, SAFE_NUM_OF_STEPS, BEAN_CODE} from "./constants.js";
 import {MAP} from "./data_map.js";
 import {adj, vertexes, fillADJ} from "./data_graphs.js";
 import {findShortestDist_BFS} from "../algorithms/bfs.js";
@@ -198,7 +198,7 @@ export function findNearestBean(pacmanX, pacmanY, map) {
         ceil += 2
         allNeighbors = findNeighbor(generation, ceil, pacmanX, pacmanY)
         // знаходимо всі одиниці та видаляємо дублікати
-        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === 1))]
+        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === BEAN_CODE))]
         isBean = neighbors.length > 0
     }
 
@@ -207,6 +207,79 @@ export function findNearestBean(pacmanX, pacmanY, map) {
 
     return best_bean_position[0][0]
 }
+
+/**
+ * метод шукаає найдільший біпер від позиції пакмена
+ * цей метод потібен коли пікмен тікає ---
+ * пакмен будує шлях до найдільшого біпера, лише коли тікає
+ * @param {number} x - position by x
+ * @param {number} y - position by y
+ * @param {[number]} map - game map
+ * @returns {number} - position of bean in the MAP
+ */
+export function findFarthestBean(x, y, map) {
+    let generation = 0,
+        isBean = false,
+        allNeighbors = [],
+        neighbors
+
+    while (!isBean) {
+        generation++
+        allNeighbors = findNeighborsByGenerationLine(generation, map)
+        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === BEAN_CODE))]
+        isBean = neighbors.length > 0
+    }
+    return neighbors[0]
+}
+
+/**
+ * цей метод шукає найближчі біпери за боковими лініями
+ * @param generation
+ * @param map
+ * @returns {*[]}
+ */
+function findNeighborsByGenerationLine(generation, map) {
+    function getElementsLEFT() {
+        let elements = []
+        for (let i = generation; i < map.length; i += MAP_WIDTH) {
+            elements.push(i)
+        }
+        return elements
+    }
+
+    function getElementsRIGHT() {
+        let elements = []
+        for (let i = MAP_WIDTH - generation - 1; i < map.length; i += MAP_WIDTH) {
+            elements.push(i)
+        }
+        return elements
+    }
+
+    function getElementsTOP() {
+        let elements = []
+        for (let i = generation * MAP_WIDTH; i < MAP_WIDTH * (generation + 1); i += 1) {
+            elements.push(i)
+        }
+        return elements
+    }
+
+    function getElementsBOTTOM() {
+        let elements = []
+        for (let i = (MAP_HEIGHT - generation) * MAP_WIDTH; i < MAP_WIDTH * ((MAP_HEIGHT - generation) + 1); i += 1) {
+            elements.push(i)
+        }
+        return elements
+    }
+
+
+    return getElementsTOP().concat(
+                getElementsRIGHT().concat(
+                  getElementsBOTTOM().concat(
+                      getElementsLEFT())))
+}
+
+
+
 
 /**
  * рахує відстань від А до Б
@@ -482,7 +555,7 @@ export function getIndexByVertexName(vertex) {
 
 }
 
-export function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix) {
+function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix) {
     let bfs_path = findShortestDist_BFS(adj, s, dest, vertexes.length)
     allPath.push(prefix.concat(bfs_path))
     isVisited[getIndexByVertexName(s)] = true
@@ -524,7 +597,7 @@ export function findMimimaxPath(s, dest, ghost1V) {
 }
 
 /**
- * знаходить всі можливі шляхи із точки А в точку Б (інколи там є повтори)todo виправити це
+ * знаходить всі можливі шляхи із точки А в точку Б (інколи там є повтори типу А-Б-В-Б-Д)todo виправити це
  * @param s
  * @param dest
  * @returns {[]}
@@ -575,6 +648,32 @@ function countAllPathWeight(path_map, allPath, ghost1V) {
     }
     return path_map
 }
+
+/**
+ *
+ * @param {Vertex[]} path
+ * @param {Vertex[]} ghost1Path
+ * по кількості можливих розгалуджень
+ по шляху привида
+ */
+function countPathWeight(path, ghost1Path) {
+    let weight = 0
+    // кількість розгалуджень
+    for (let i = 0; i < path.length; i++) {
+        let index = getIndexByVertexName(path[i])
+        weight += adj[index].length
+    }
+    // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
+    for (let i = 0; i < ghost1Path.length; i++)
+        if (path.includes(ghost1Path[i]))
+            weight *= -1
+
+    // todo зробити перевірку хто швидше дійде до вершини пакмени чи привид (якщо однаково то видалити шлях якщо по різному то шлях норм напевно)
+
+
+    return weight
+}
+
 
 /**
  *
@@ -633,27 +732,6 @@ function findMaxOfMinPath(minPaths) {
     return max
 }
 
-/**
- *
- * @param {Vertex[]} path
- * @param {Vertex[]} ghost1Path
- * по кількості можливих розгалуджень
- по шляху привида
- */
-function countPathWeight(path, ghost1Path) {
-    let weight = 0
-    // кількість розгалуджень
-    for (let i = 0; i < path.length; i++) {
-        let index = getIndexByVertexName(path[i])
-        weight += adj[index].length
-    }
-    // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
-    for (let i = 0; i < ghost1Path.length; i++)
-        if (path.includes(ghost1Path[i]))
-            weight *= -1
-
-    return weight
-}
 
 /**
  * перевіряє чи позиція ОБ'ЄКТА А - є безпечною
@@ -780,6 +858,7 @@ export function pacmanRunAway(pacmanV, ghostV) {
     return path
 }
 
+
 /**
  * знаходимо найближчу безпечнуу вершину
  * @param {Vertex} pacmanV
@@ -797,3 +876,4 @@ export function findNearestSafeVertex(pacmanV, ghost1V) {
     }
     return vertex
 }
+

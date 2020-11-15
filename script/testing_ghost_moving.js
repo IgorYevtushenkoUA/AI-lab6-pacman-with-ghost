@@ -6,6 +6,9 @@ import {adj} from "./data/data_graphs.js";
 import {getVertexesByPosition} from "./data/moving.js";
 import {isEqualVertexes} from "./data/moving.js";
 import {heuristic} from "./data/moving.js";
+import {MAP_WIDTH} from "./data/constants.js";
+import {findNeighbor} from "./data/moving";
+import {MAP} from "./data/data_map.js";
 
 
 fillADJ()
@@ -223,11 +226,24 @@ function characterDistanceToVertex(x, y, vertexes, nearestVertex, path, i1, i2) 
     return heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
 }
 
-let x = 5,
-    y = 4,
-    vertex = [vertexes[2], vertexes[3]],
-    nearestVertex = vertexes[3],
-    path = [vertexes[3], vertexes[2]],
-    i1 = 0,
-    i2 = 1
-console.log(characterDistanceToVertex(x, y, vertex, nearestVertex, path, vertex.length-1, vertex.length-2))
+
+export function findFarthestBean(x, y, map) {
+    let generation = 0,
+        ceil = 1,
+        isBean = false,
+        allNeighbors = [],
+        neighbors
+
+    while (ceil !== MAP_WIDTH) {
+        generation++
+        ceil += 2
+        allNeighbors = findNeighbor(generation, ceil, x, y)
+        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === 1))]
+    }
+    /*     */
+    console.log(neighbors)
+    return neighbors
+}
+
+console.log(findFarthestBean(10, 12, MAP))
+

@@ -10,7 +10,7 @@ import {
     isSamePaths, isEqualVertexes,
     stayBetweenVertexes, getNearestVertex,
     findMimimaxPath, pacmanRunAway, findNearestSafeVertex, getDirFromVertex1ToVertex2,
-    isSafePosition
+    isSafePosition, findFarthestBean
 } from "../data/moving.js";
 
 export class Pacman {
@@ -105,27 +105,30 @@ export class Pacman {
             beanCoordinates = getBEANCoordinationByMapPositions(nearestBean),
             beanX = beanCoordinates[0],
             beanY = beanCoordinates[1],
-            noObstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
-            dir = "",
-            pacmanVertex = getVertexesByPosition(x, y),
             beanVertex = getVertexesByPosition(beanX, beanY),
-            ghost1V = getVertexesByPosition(g1x, g1y),
             beanNearestVertex = getNearestVertex(beanX, beanY, beanVertex),
+
+            farthestBean = findFarthestBean(x, y, MAP),
+            farthestBeanCoordinates = getBEANCoordinationByMapPositions(farthestBean),
+            farthestBeanX = farthestBeanCoordinates[0],
+            farthestBeanY = farthestBeanCoordinates[1],
+            farthestBeanVertex = getVertexesByPosition(farthestBeanX, farthestBeanY),
+            farthestBeanNearestVertex = getNearestVertex(farthestBeanX, farthestBeanY, farthestBeanVertex),
+
+            pacmanVertex = getVertexesByPosition(x, y),
             pacmanNearestVertex = getNearestVertex(x, y, pacmanVertex),
-            ghost1NearestVertex = getNearestVertex(g1x, g1y, ghost1V)
+
+            ghost1V = getVertexesByPosition(g1x, g1y),
+            ghost1NearestVertex = getNearestVertex(g1x, g1y, ghost1V),
+
+            noObstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
+            dir = ""
+
 
         // якщо лежить в одному напрямку без перешкод
         if (noObstaclesInTheWay[0]) {
             let pacmanSafePosition = isSafePosition(x, y, pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
             let beanSafePosition = isSafePosition(beanX, beanY, beanVertex, beanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
-
-            // if (pacmanSafePosition && beanSafePosition) {
-            //     // do step to bean
-            // } else if (pacmanSafePosition && !beanSafePosition) {
-            //     // xz go to neaxt vertex
-            // } else if (!pacmanSafePosition) {
-            //     // go to nearest safe position
-            // }
 
             if (pacmanSafePosition && beanSafePosition) {
                 // go by X
@@ -140,9 +143,17 @@ export class Pacman {
                 }
                 debugger
             } else {
-                if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
+
+                if (pacmanNearestVertex.getName() === farthestBeanVertex.getName()) {
+
+                } else {
+                    let bfs_safe_minMax = findMimimaxPath(pacmanNearestVertex, farthestBeanNearestVertex, ghost1V)[0]
                     debugger
+                }
+                if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
+                    // let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
                     let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
+                    debugger
                     if (safeV.length === 0) {
                         debugger
                         // you have problems todo !!!!!!!!!!!
@@ -153,17 +164,19 @@ export class Pacman {
                         debugger
                     }
                 } else {
+                    let safe_path = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)//pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
                     debugger
-                    let safe_path = pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
                     if (safe_path.length === 0) {
                         debugger
                         alert("you have no variant ; ghost catch you 2")
                         dir = "STOP"
                     } else {
-                        debugger
                         let vertexes = getVertexesByPosition(x, y)
+                        debugger
                         if (vertexes.length === 1) {
-                            dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
+                            // dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1]) // це працює коли я використовую pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
+                            // dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
+                            dir = getDirFromPosition1ToVertex2(x, y, safe_path[0])
                             debugger
                         } else {
                             dir = getDirFromPosition1ToVertex2(x, y, pacmanNearestVertex)
@@ -172,12 +185,6 @@ export class Pacman {
                     }
                 }
             }
-            // todo розглянути варіанти нижче
-            // else if (pacmanSafePosition && !beanSafePosition) {
-            //     alert("pacmanSafePosition && !beanSafePosition")
-            // } else if (!pacmanSafePosition) {
-            // }
-
         }
         // якщо лежить у межах різних вершин
         else {
