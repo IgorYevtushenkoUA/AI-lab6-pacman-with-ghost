@@ -88,9 +88,7 @@ export class Ghost {
 
         let ghostV = getVertexesByPosition(x, y)
         let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
-        if (ghostV === undefined || pacmanV === undefined) {
-            debugger
-        }
+
         let nearestGhostVertex = getNearestVertex(x, y, ghostV)
         let nearestPacmanVertex = getNearestVertex(pacmanX, pacmanY, pacmanV)
         let dir
@@ -111,25 +109,28 @@ export class Ghost {
                 this._old_path = [nearestGhostVertex, adj[indexV][randomV]] // nearestGhostVertex -> was ghost[0]
                 this._stepCounter++
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
+                debugger
             } else {
                 let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                 this._old_path = bfs_path.slice(0)
                 this._stepCounter++
-                if (bfs_path === []) {
-                    alert("if (bfs_path === can not find the path")
-                    // якщо стоїть на вершині (яка є і вершиною найближчою пакмена та привида) то ламається бо дір повертає невідомо тому
-
-                    dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex) // nearestPacmanVertex -> was  nearestGhostVertex
+                if (bfs_path.length === 0) {
+                    // привид у погоні за пакменом і на одній лінії todo дати напрямок
+                    let nextVertex = nearestGhostVertex.getName() === pacmanV[0].getName() ? pacmanV[1] : pacmanV[0]
+                    dir = getDirFromPosition1ToVertex2(x, y, nextVertex) // nearestPacmanVertex -> was  nearestGhostVertex
                     debugger
                 } else {
                     dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
+                    debugger
                 }
             }
         } else {
             if (this._old_path.length === 0) {
                 dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
+                debugger
             } else {
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
+                debugger
             }
         }
 

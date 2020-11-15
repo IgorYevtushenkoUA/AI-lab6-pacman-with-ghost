@@ -97,15 +97,21 @@ export function getDirFromPosition1ToPosition2(x1, y1, x2, y2) {
 }
 
 export function getDirFromPosition1ToVertex2(x, y, v) {
-    let dir = ""
-    if (x < v.getX()) dir = "RIGHT"
-    else if (x > v.getX()) dir = "LEFT"
-    else if (y > v.getY()) dir = "TOP"
-    else if (y < v.getY()) dir = "BOTTOM"
-    else {
-        dir = "STOP"
+    try {
+        let dir = ""
+        if (x < v.getX()) dir = "RIGHT"
+        else if (x > v.getX()) dir = "LEFT"
+        else if (y > v.getY()) dir = "TOP"
+        else if (y < v.getY()) dir = "BOTTOM"
+        else {
+            dir = "STOP"
+        }
+        return dir
+    } catch (e) {
+        alert("getDirFromPosition1ToVertex2")
+        debugger
     }
-    return dir
+    debugger
 }
 
 /**
@@ -583,6 +589,8 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
             }
         }
     }
+
+    // роблю це бо  останній елемент просто вертекс а не масив і через це помилки вилітають
     return allPath
 }
 
@@ -617,15 +625,18 @@ function getAllPath(s, dest) {
     // for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
     let index = adj[s.getID()].length
     for (let i = 0; i < index; i++) {
-        for (let j = 0; j < vertexes.length; j++)
-            isVisited[j] = false
-        for (let j = 0; j < i; j++) {
-            isVisited[adj[s.getID()][j]] = true
-        }
-        findAllPathFromSourceToDestination(s, dest, isVisited, allPath, [])
+        let path = [s]
+
+        for (let j = 0; j < vertexes.length; j++) isVisited[j] = false
+        isVisited[s.getID()] = true
+
+        findAllPathFromSourceToDestination(adj[s.getID()][i], dest, isVisited, path, [s])
+        path.shift()
+        Array.prototype.push.apply(allPath,path)
     }
-    return allPath[150]
+    return allPath
 }
+console.log(getAllPath(vertexes[17],vertexes[4]))
 
 /**
  * будує "ДЕРЕВО(MAP)-ШЛЯХІВ" із з'єднаннь головного графу
@@ -657,15 +668,21 @@ function buildPathMap(source) {
  * @returns {*}
  */
 function countAllPathWeight(path_map, allPath, ghost1V) {
-    for (let i = 0; i < allPath.length; i++) {
-        let v2 = allPath[i][1]
-        let path_weight = countPathWeight(allPath[i], ghost1V)
-        let oldVal = path_map.get(v2.getName())
-        oldVal.push([allPath[i], path_weight])
-        oldVal.push([allPath[i], path_weight])
-        path_map.set(v2.getName(), oldVal)
+    try {
+        for (let i = 0; i < allPath.length; i++) {
+            let v2 = allPath[i][1]
+            let path_weight = countPathWeight(allPath[i], ghost1V)
+            let oldVal = path_map.get(v2.getName())
+            oldVal.push([allPath[i], path_weight])
+            oldVal.push([allPath[i], path_weight])
+            path_map.set(v2.getName(), oldVal)
+        }
+        return path_map
+    } catch (e) {
+        alert("Uncaught TypeError: Cannot read property 'getName' of undefined")
+        debugger
     }
-    return path_map
+    debugger
 }
 
 /**
@@ -683,9 +700,16 @@ function countPathWeight(path, ghost1Path) {
         weight += adj[index].length
     }
     // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
-    for (let i = 0; i < ghost1Path.length; i++)
-        if (path.includes(ghost1Path[i]))
-            weight *= -1
+    for (let i = 0; i < ghost1Path.length; i++) {
+        try {
+            if (path.includes(ghost1Path[i]))
+                weight *= -1
+        } catch (e) {
+            alert("countPathWeight error path.includes is not a function")
+            debugger
+        }
+        debugger
+    }
 
     // todo зробити перевірку хто швидше дійде до вершини пакмени чи привид (якщо однаково то видалити шлях якщо по різному то шлях норм напевно)
 
@@ -881,9 +905,7 @@ export function countStepsToVertex(charX, charY, charV, charNearestV, distanceV,
     if (path.length === 0) {
         debugger
         return 0
-    }
-
-    else if (charV.length === 1) {
+    } else if (charV.length === 1) {
         debugger
         return countStepsBetweenVertexes(charNearestV, distanceV, path)
     }
@@ -897,16 +919,6 @@ export function countStepsToVertex(charX, charY, charV, charNearestV, distanceV,
     debugger
     return countStepsBetweenVertexes(charNearestV, distanceV, path) + heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
 }
-
-// todo del comments
-// let charX = 5,
-//     charY = 10,
-//     charV = [vertexes [2], vertexes[18]],
-//     charNearestV = vertexes[18],
-//     distanceV = [16],
-//     path = [vertexes[18], vertexes[17],vertexes[16]]
-//
-// console.log(countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path))
 
 function countStepsBetweenVertexes(v1, v2, path) {
     let sum = 0

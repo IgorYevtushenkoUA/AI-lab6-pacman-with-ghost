@@ -54,7 +54,11 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
 
 let isVisited = [], allPath = []
 for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
-findAllPathFromSourceToDestination(vertexes[0], vertexes[8], isVisited, allPath, [])
+
+    findAllPathFromSourceToDestination(vertexes[0], vertexes[8], isVisited, allPath, [])
+
+
+
 let path_hash = new Map()
 let index = getIndexByVertexName(vertexes[0])
 for (let i = 0; i < adj[index].length; i++) {
@@ -137,67 +141,3 @@ function countPathWeight(path, ghost1Path) {
     return weight
 }
 
-/**
- * метод що формує шлях для утікання від привида
- * @param {Vertex} pacmanV
- * @param {Vertex} ghostV
- * @returns {[*]}
- */
-function pacmanRunAway(pacmanV, ghostV) {
-    let path = [pacmanV], isVisited = []
-
-    for (let i = 0; i < vertexes.length; i++)
-        isVisited[i] = false
-
-    isVisited[ghostV.getID()] = true
-    isVisited[pacmanV.getID()] = true
-
-    let deep = 1
-    let mainVertex = path[0]
-    while (deep < 5 && path.length > 0) {
-        let wasAdded = false
-        for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
-            let currentVertex = adj[mainVertex.getID()][i]
-            if (isEqualVertexes(currentVertex, ghostV)) continue
-            if (isVisited[currentVertex.getID()] === true) continue
-
-            isVisited[currentVertex.getID()] = true
-            path.push(currentVertex)
-            deep++
-            wasAdded = true
-            mainVertex = currentVertex
-        }
-        if (!wasAdded) {
-            path.pop()
-            deep--
-            isVisited[mainVertex.getID()] = false
-        }
-    }
-    return path
-}
-
-
-function countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path) {
-    if (path === []) return 0
-
-
-    if (charV.length === 1)
-        return countStepsBetweenVertexes(charNearestV, distanceV, path)
-
-    // стою між двома вершинами шляху
-    if ((path[0].getName() === charV[0].getName() && path[1].getName() === charV[1].getName())
-        || (path[0].getName() === charV[1].getName() && path[1].getName() === charV[0].getName())) {
-        return countStepsBetweenVertexes(charNearestV, distanceV, path) - heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
-    }
-    // стою між своїми двома вершинами, одна з яких топова вершина
-    return countStepsBetweenVertexes(charNearestV, distanceV, path) + heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
-}
-// todo del comments
-// let charX = 5,
-//     charY = 10,
-//     charV = [vertexes [2], vertexes[18]],
-//     charNearestV = vertexes[18],
-//     distanceV = [16],
-//     path = [vertexes[18], vertexes[17],vertexes[16]]
-//
-// console.log(countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path))
