@@ -9,7 +9,7 @@ todo зробити універсальний поворот (бо в мене 
 todo
  */
 
-fillADJ()
+// fillADJ() // дублює дані - потрібно лише для тесту
 
 /**
  * зробити один крок
@@ -109,9 +109,9 @@ export function getDirFromPosition1ToVertex2(x, y, v) {
         return dir
     } catch (e) {
         alert("getDirFromPosition1ToVertex2")
-        debugger
+
     }
-    debugger
+
 }
 
 /**
@@ -477,7 +477,7 @@ export function getNearestVertex(x, y, vertex) {
             : vertex[1]
 
     } catch (e) {
-        debugger
+
     }
 }
 
@@ -602,14 +602,18 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
  * @returns {*}
  */
 export function findMimimaxPath(s, dest, ghost1V) {
-    // minMAXPath = findMaxOfMinPath(findMinPath(countAllPathWeight(buildPathMap(s),getAllPath(s, dest),ghost1V)))
+    let a = ghost1V
 
-    let allPath = getAllPath(s, dest)
+    let allPath = [...getAllPath(s, dest)]
+
     let path_map = buildPathMap(s)
+
     path_map = countAllPathWeight(path_map, allPath, ghost1V)
+
     let minPath = findMinPath(path_map)
+
     let minMAXPath = findMaxOfMinPath(minPath)
-    debugger
+
     return minMAXPath
 
 }
@@ -621,8 +625,16 @@ export function findMimimaxPath(s, dest, ghost1V) {
  * @returns {[]}
  */
 function getAllPath(s, dest) {
-    let isVisited = [], allPath = []
-    // for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
+
+    let isVisited = []
+    let allPath = []
+
+    let allNeighbor = []
+
+    for (let i = 0; i < adj[s.getID()].length; i++) {
+        allNeighbor.push(adj[s.getID()][i])
+    }
+
     let index = adj[s.getID()].length
     for (let i = 0; i < index; i++) {
         let path = [s]
@@ -632,11 +644,12 @@ function getAllPath(s, dest) {
 
         findAllPathFromSourceToDestination(adj[s.getID()][i], dest, isVisited, path, [s])
         path.shift()
-        Array.prototype.push.apply(allPath,path)
+
+        Array.prototype.push.apply(allPath, path)
     }
+
     return allPath
 }
-console.log(getAllPath(vertexes[17],vertexes[4]))
 
 /**
  * будує "ДЕРЕВО(MAP)-ШЛЯХІВ" із з'єднаннь головного графу
@@ -669,6 +682,7 @@ function buildPathMap(source) {
  */
 function countAllPathWeight(path_map, allPath, ghost1V) {
     try {
+        allPath = allPath.filter(item => item.length > 1)
         for (let i = 0; i < allPath.length; i++) {
             let v2 = allPath[i][1]
             let path_weight = countPathWeight(allPath[i], ghost1V)
@@ -680,9 +694,9 @@ function countAllPathWeight(path_map, allPath, ghost1V) {
         return path_map
     } catch (e) {
         alert("Uncaught TypeError: Cannot read property 'getName' of undefined")
-        debugger
+
     }
-    debugger
+
 }
 
 /**
@@ -701,18 +715,11 @@ function countPathWeight(path, ghost1Path) {
     }
     // чи є спільний шлях із привидом, якщо так то цей варіант стає мінусовим - тобто непідходящим
     for (let i = 0; i < ghost1Path.length; i++) {
-        try {
-            if (path.includes(ghost1Path[i]))
-                weight *= -1
-        } catch (e) {
-            alert("countPathWeight error path.includes is not a function")
-            debugger
-        }
-        debugger
+        if (path.includes(ghost1Path[i]))
+            weight *= -1
     }
 
     // todo зробити перевірку хто швидше дійде до вершини пакмени чи привид (якщо однаково то видалити шлях якщо по різному то шлях норм напевно)
-
 
     return weight
 }
@@ -723,41 +730,47 @@ function countPathWeight(path, ghost1Path) {
  * @returns {[]}
  */
 function findMinPath(path_map) {
-    let minPaths = []
-    let keys = Array.from(path_map.keys())
-    // find min from positive agruments
-    for (let k = 0; k < keys.length; k++) {
-        let min = Number.MAX_SAFE_INTEGER
-        let index = -1
-
-        for (let i = 0; i < path_map.get(keys[k]).length; i++) {
-            let obj = path_map.get(keys[k])[i]
-            let w = obj[1]
-            if (w > 0 && w < min) {
-                min = w
-                index = i
-            }
-        }
-        if (index !== -1) minPaths.push(path_map.get(keys[k])[index])
-    }
-    // find min from negative arguments
-    if (minPaths.length === 0) {
+    try {
+        let minPaths = []
+        let keys = Array.from(path_map.keys())
+        // find min from positive agruments
         for (let k = 0; k < keys.length; k++) {
-            let min = 0
-            let index = 0
+            let min = Number.MAX_SAFE_INTEGER
+            let index = -1
 
             for (let i = 0; i < path_map.get(keys[k]).length; i++) {
                 let obj = path_map.get(keys[k])[i]
                 let w = obj[1]
-                if (w < min) {
+                if (w > 0 && w < min) {
                     min = w
                     index = i
                 }
             }
-            minPaths.push(path_map.get(keys[k])[index])
+            if (index !== -1) minPaths.push(path_map.get(keys[k])[index])
         }
+        // find min from negative arguments
+        if (minPaths.length === 0) {
+            for (let k = 0; k < keys.length; k++) {
+                let min = 0
+                let index = 0
+
+                for (let i = 0; i < path_map.get(keys[k]).length; i++) {
+                    let obj = path_map.get(keys[k])[i]
+                    let w = obj[1]
+                    if (w < min) {
+                        min = w
+                        index = i
+                    }
+                }
+                minPaths.push(path_map.get(keys[k])[index])
+            }
+        }
+        return minPaths
+    } catch (e) {
+        alert("findMinPath")
+
     }
-    return minPaths
+
 }
 
 /**
@@ -766,12 +779,18 @@ function findMinPath(path_map) {
  * @returns {*}
  */
 function findMaxOfMinPath(minPaths) {
-    let max = minPaths[0]
-    for (let i = 1; i < minPaths; i++) {
-        if (minPaths[i][1] > max[1])
-            max = minPaths[i]
+    try {
+        let max = minPaths[0]
+        for (let i = 1; i < minPaths; i++) {
+            if (minPaths[i][1] > max[1])
+                max = minPaths[i]
+        }
+        return max
+    } catch (e) {
+        alert("error: findMaxOfMinPath(minPaths)")
+
     }
-    return max
+
 }
 
 /**
@@ -903,20 +922,20 @@ export function pacmanRunAway(pacmanV, ghostV) {
 // important!
 export function countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path) {
     if (path.length === 0) {
-        debugger
+
         return 0
     } else if (charV.length === 1) {
-        debugger
+
         return countStepsBetweenVertexes(charNearestV, distanceV, path)
     }
     // стою між двома вершинами шляху
     else if ((path[0].getName() === charV[0].getName() && path[1].getName() === charV[1].getName())
         || (path[0].getName() === charV[1].getName() && path[1].getName() === charV[0].getName())) {
-        debugger
+
         return countStepsBetweenVertexes(charNearestV, distanceV, path) - heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
     }
     // стою між своїми двома вершинами, одна з яких топова вершина
-    debugger
+
     return countStepsBetweenVertexes(charNearestV, distanceV, path) + heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
 }
 

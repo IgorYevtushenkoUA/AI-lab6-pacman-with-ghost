@@ -8,7 +8,7 @@ import {Ghost} from "./characters/ghost.js";
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 1, startPacmanY = 15, ghost1X = 1, ghost1Y = 1,
+let startPacmanX = 5, startPacmanY = 9, ghost1X = 5, ghost1Y = 2,
     score = 0,
     timerDelay = 300,
     intervalID,
@@ -126,8 +126,11 @@ function run() {
 
 function main() {
     fillADJ()
+    debugger
     drawMap()
+
     initCharacters()
+    debugger
     run()
 }
 
