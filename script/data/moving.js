@@ -174,7 +174,6 @@ export function isStayInOneLine(v1, v2) {
     return adj[indexV].includes(v2)
 }
 
-
 //1) Знайти найближчий крекер
 /**
  * шукає найближчий доступний КРЕКЕР навколо себе
@@ -273,13 +272,10 @@ function findNeighborsByGenerationLine(generation, map) {
 
 
     return getElementsTOP().concat(
-                getElementsRIGHT().concat(
-                  getElementsBOTTOM().concat(
-                      getElementsLEFT())))
+        getElementsRIGHT().concat(
+            getElementsBOTTOM().concat(
+                getElementsLEFT())))
 }
-
-
-
 
 /**
  * рахує відстань від А до Б
@@ -438,7 +434,7 @@ export function getVertexesByPosition(posX, posY) {
     // перевірити спочатку всі вершини
     for (let i = 0; i < vertexes.length; i++) {
         let currV = vertexes[i]
-        if (isStayInVertexTop(posX, posY, currV)) {
+        if (isPositionOnVertex(posX, posY, currV)) {
             return [currV]
         }
     }
@@ -446,7 +442,7 @@ export function getVertexesByPosition(posX, posY) {
     for (let i = 0; i < adj.length; i++) {
         let currV = vertexes[i]
         // todo del this if
-        if (isStayInVertexTop(posX, posY, currV)) {
+        if (isPositionOnVertex(posX, posY, currV)) {
             return [currV]
         }
 
@@ -479,22 +475,34 @@ export function getNearestVertex(x, y, vertex) {
     }
 }
 
-
 /**
  * перевіряємо чи ОБ'ЄКТ стоїть на вершині (на перехресті доріг)
  * @param {number} posX
  * @param {number} posY
  * @param {Vertex} vertex
  */
-export function isStayInVertexTop(posX, posY, vertex) {
-    try {
-        let x = vertex.getX(),
-            y = vertex.getY()
-        return x === posX && y === posY
-    } catch (e) {
-        debugger
-    }
+function isPositionOnVertex(posX, posY, vertex) {
+    let x = vertex.getX(),
+        y = vertex.getY()
+    return x === posX && y === posY
 }
+
+/**
+ *
+ * @param x
+ * @param y
+ * @returns {(boolean|Vertex)[]|boolean[]}
+ */
+function isStayOnVertexTop(x, y) {
+    for (let i = 0; i < vertexes.length; i++) {
+        let currV = vertexes[i]
+        if (isPositionOnVertex(x, y, currV)) {
+            return [true, currV]
+        }
+    }
+    return [false]
+}
+
 
 /**
  * повертає вершину на якій ви знаходитеся
@@ -593,7 +601,9 @@ export function findMimimaxPath(s, dest, ghost1V) {
     path_map = countAllPathWeight(path_map, allPath, ghost1V)
     let minPath = findMinPath(path_map)
     let minMAXPath = findMaxOfMinPath(minPath)
+    debugger
     return minMAXPath
+
 }
 
 /**
@@ -604,9 +614,17 @@ export function findMimimaxPath(s, dest, ghost1V) {
  */
 function getAllPath(s, dest) {
     let isVisited = [], allPath = []
-    for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
-    findAllPathFromSourceToDestination(s, dest, isVisited, allPath, [])
-    return allPath
+    // for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
+    let index = adj[s.getID()].length
+    for (let i = 0; i < index; i++) {
+        for (let j = 0; j < vertexes.length; j++)
+            isVisited[j] = false
+        for (let j = 0; j < i; j++) {
+            isVisited[adj[s.getID()][j]] = true
+        }
+        findAllPathFromSourceToDestination(s, dest, isVisited, allPath, [])
+    }
+    return allPath[150]
 }
 
 /**
@@ -644,6 +662,7 @@ function countAllPathWeight(path_map, allPath, ghost1V) {
         let path_weight = countPathWeight(allPath[i], ghost1V)
         let oldVal = path_map.get(v2.getName())
         oldVal.push([allPath[i], path_weight])
+        oldVal.push([allPath[i], path_weight])
         path_map.set(v2.getName(), oldVal)
     }
     return path_map
@@ -673,7 +692,6 @@ function countPathWeight(path, ghost1Path) {
 
     return weight
 }
-
 
 /**
  *
@@ -732,7 +750,6 @@ function findMaxOfMinPath(minPaths) {
     return max
 }
 
-
 /**
  * перевіряє чи позиція ОБ'ЄКТА А - є безпечною
  * @param {number} characterX
@@ -746,9 +763,9 @@ function findMaxOfMinPath(minPaths) {
  * @returns {boolean}
  */
 export function isSafePosition(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV) {
-    if (isEqualVertexes(characterNearestV, nearestGhostV)) return false
+    if (isEqualVertexes(characterNearestV, nearestGhostV))
+        return false
     let bfsPathFromGhost2Pacman = findShortestDist_BFS(adj, nearestGhostV, characterNearestV, vertexes.length)
-    if (bfsPathFromGhost2Pacman.length === 2) return false
     return bfsPathFromGhost2Pacman.length >= 3 || isSafeStepsDistances(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV, bfsPathFromGhost2Pacman)
 }
 
@@ -806,7 +823,6 @@ function characterDistanceToVertex(x, y, vertexes, nearestVertex, path, i1, i2) 
  */
 function sumOfSteps(path, x, y, g1x, g1y) {
 
-
     let sum = 0
     for (let i = 0; i < path.length - 1; i++) {
         sum += heuristicVertex(path[i], path[i + 1])
@@ -828,6 +844,8 @@ function sumOfSteps(path, x, y, g1x, g1y) {
 export function pacmanRunAway(pacmanV, ghostV) {
     let path = [pacmanV], isVisited = []
 
+    const DEEP_CONST = 3
+
     for (let i = 0; i < vertexes.length; i++)
         isVisited[i] = false
 
@@ -836,7 +854,7 @@ export function pacmanRunAway(pacmanV, ghostV) {
 
     let deep = 1
     let mainVertex = path[0]
-    while (deep < 5 && path.length > 0) {
+    while (deep < DEEP_CONST && path.length > 0) {
         let wasAdded = false
         for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
             let currentVertex = adj[mainVertex.getID()][i]
@@ -858,6 +876,46 @@ export function pacmanRunAway(pacmanV, ghostV) {
     return path
 }
 
+// important!
+export function countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path) {
+    if (path.length === 0) {
+        debugger
+        return 0
+    }
+
+    else if (charV.length === 1) {
+        debugger
+        return countStepsBetweenVertexes(charNearestV, distanceV, path)
+    }
+    // стою між двома вершинами шляху
+    else if ((path[0].getName() === charV[0].getName() && path[1].getName() === charV[1].getName())
+        || (path[0].getName() === charV[1].getName() && path[1].getName() === charV[0].getName())) {
+        debugger
+        return countStepsBetweenVertexes(charNearestV, distanceV, path) - heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
+    }
+    // стою між своїми двома вершинами, одна з яких топова вершина
+    debugger
+    return countStepsBetweenVertexes(charNearestV, distanceV, path) + heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
+}
+
+// todo del comments
+// let charX = 5,
+//     charY = 10,
+//     charV = [vertexes [2], vertexes[18]],
+//     charNearestV = vertexes[18],
+//     distanceV = [16],
+//     path = [vertexes[18], vertexes[17],vertexes[16]]
+//
+// console.log(countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path))
+
+function countStepsBetweenVertexes(v1, v2, path) {
+    let sum = 0
+
+    for (let i = 0; i < path.length - 1; i++)
+        sum += heuristicVertex(path[i], path[i + 1])
+
+    return sum
+}
 
 /**
  * знаходимо найближчу безпечнуу вершину

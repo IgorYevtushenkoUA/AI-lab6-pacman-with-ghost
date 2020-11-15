@@ -10,7 +10,7 @@ import {
     isSamePaths, isEqualVertexes,
     stayBetweenVertexes, getNearestVertex,
     findMimimaxPath, pacmanRunAway, findNearestSafeVertex, getDirFromVertex1ToVertex2,
-    isSafePosition, findFarthestBean
+    isSafePosition, findFarthestBean, countStepsToVertex
 } from "../data/moving.js";
 
 export class Pacman {
@@ -124,6 +124,7 @@ export class Pacman {
             noObstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
             dir = ""
 
+        debugger
 
         // якщо лежить в одному напрямку без перешкод
         if (noObstaclesInTheWay[0]) {
@@ -144,12 +145,6 @@ export class Pacman {
                 debugger
             } else {
 
-                if (pacmanNearestVertex.getName() === farthestBeanVertex.getName()) {
-
-                } else {
-                    let bfs_safe_minMax = findMimimaxPath(pacmanNearestVertex, farthestBeanNearestVertex, ghost1V)[0]
-                    debugger
-                }
                 if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
                     // let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
                     let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
@@ -163,8 +158,34 @@ export class Pacman {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
                         debugger
                     }
-                } else {
-                    let safe_path = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)//pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
+                } else { // here we should run away because we in dangerous zone
+                    // проблема у цьому методі pacmanRunAway - він робить небезпечний шлях
+
+
+                    /*
+                    тут я передаю неправильну вершину бо вона є небезпечною ібо  найближча це погано інколи треба дільша
+
+                    аби обрати правильну вершину потрібно обрати чи ближня чи дальня
+                    треба порахувати до якої вершини привид швидше дійде і обрати ту до якої довше
+                     */
+
+                    let mostSafeVertexForPacman
+                    if (pacmanVertex.length === 1) {
+                        mostSafeVertexForPacman = pacmanNearestVertex
+                    } else {
+                        let ghostPath1 = findShortestDist_BFS(adj, ghost1NearestVertex, pacmanVertex[0], vertexes.length),
+                            ghostPath2 = findShortestDist_BFS(adj, ghost1NearestVertex, pacmanVertex[1], vertexes.length)
+                        debugger
+                        let steps1 = countStepsToVertex(g1x, g1y, ghost1V, ghost1NearestVertex, pacmanVertex[0], ghostPath1),
+                            steps2 = countStepsToVertex(g1x, g1y, ghost1V, ghost1NearestVertex, pacmanVertex[1], ghostPath2)
+
+                        mostSafeVertexForPacman = (steps1 <= steps2) ? pacmanVertex[1] : pacmanVertex[0]
+                        debugger
+                    }
+                    debugger
+                    let safe_path = pacmanRunAway(mostSafeVertexForPacman, ghost1NearestVertex)
+
+
                     debugger
                     if (safe_path.length === 0) {
                         debugger
@@ -174,12 +195,11 @@ export class Pacman {
                         let vertexes = getVertexesByPosition(x, y)
                         debugger
                         if (vertexes.length === 1) {
-                            // dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1]) // це працює коли я використовую pacmanRunAway(pacmanNearestVertex, ghost1NearestVertex)
-                            // dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
-                            dir = getDirFromPosition1ToVertex2(x, y, safe_path[0])
+                            dir = getDirFromVertex1ToVertex2(safe_path[0], safe_path[1])
                             debugger
                         } else {
-                            dir = getDirFromPosition1ToVertex2(x, y, pacmanNearestVertex)
+                            // dir = getDirFromPosition1ToVertex2(x, y, pacmanNearestVertex)
+                            dir = getDirFromPosition1ToVertex2(x, y, safe_path[0])
                             debugger
                         }
                     }

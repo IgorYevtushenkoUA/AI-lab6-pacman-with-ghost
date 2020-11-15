@@ -115,7 +115,7 @@ export class Ghost {
                 let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                 this._old_path = bfs_path.slice(0)
                 this._stepCounter++
-                if (bfs_path === "can not find the path") {
+                if (bfs_path === []) {
                     alert("if (bfs_path === can not find the path")
                     // якщо стоїть на вершині (яка є і вершиною найближчою пакмена та привида) то ламається бо дір повертає невідомо тому
 

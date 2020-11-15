@@ -1,15 +1,8 @@
-import {Vertex} from "./graph/vertex.js";
+import {fillADJ, vertexes, adj} from "./data/data_graphs.js";
 import {findShortestDist_BFS} from "./algorithms/bfs.js";
-import {fillADJ} from "./data/data_graphs.js";
-import {vertexes} from "./data/data_graphs.js";
-import {adj} from "./data/data_graphs.js";
-import {getVertexesByPosition} from "./data/moving.js";
 import {isEqualVertexes} from "./data/moving.js";
-import {heuristic} from "./data/moving.js";
-import {MAP_WIDTH} from "./data/constants.js";
-import {findNeighbor} from "./data/moving";
-import {MAP} from "./data/data_map.js";
-
+import {Vertex} from "./graph/vertex.js";
+import {heuristic} from "./data/moving";
 
 fillADJ()
 
@@ -61,8 +54,7 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
 
 let isVisited = [], allPath = []
 for (let i = 0; i < vertexes.length; i++) isVisited[i] = false
-findAllPathFromSourceToDestination(vertexes[0], vertexes[3], isVisited, allPath, [])
-
+findAllPathFromSourceToDestination(vertexes[0], vertexes[8], isVisited, allPath, [])
 let path_hash = new Map()
 let index = getIndexByVertexName(vertexes[0])
 for (let i = 0; i < adj[index].length; i++) {
@@ -71,7 +63,9 @@ for (let i = 0; i < adj[index].length; i++) {
 for (let i = 0; i < allPath.length; i++) {
     let v2 = allPath[i][1]
     let path_weight = countPathWeight(allPath[i], [vertexes[4]])
-    let oldVal = path_hash.get(v2.getName())
+    let nameV = v2.getName()
+    let oldVal = path_hash.get(nameV)
+    if (oldVal === undefined) oldVal = []
     oldVal.push([allPath[i], path_weight])
     path_hash.set(v2.getName(), oldVal)
 }
@@ -118,6 +112,9 @@ for (let i = 1; i < minPaths; i++) {
         max = minPaths[i]
 }
 
+
+
+
 /**
  *
  * @param {Vertex[]} path
@@ -147,12 +144,10 @@ function countPathWeight(path, ghost1Path) {
  * @returns {[*]}
  */
 function pacmanRunAway(pacmanV, ghostV) {
-    let path = [pacmanV],
-        isVisited = []
+    let path = [pacmanV], isVisited = []
 
-    for (let i = 0; i < vertexes.length; i++) {
+    for (let i = 0; i < vertexes.length; i++)
         isVisited[i] = false
-    }
 
     isVisited[ghostV.getID()] = true
     isVisited[pacmanV.getID()] = true
@@ -164,7 +159,6 @@ function pacmanRunAway(pacmanV, ghostV) {
         for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
             let currentVertex = adj[mainVertex.getID()][i]
             if (isEqualVertexes(currentVertex, ghostV)) continue
-            // if (path.includes(adj[index][i])) continue
             if (isVisited[currentVertex.getID()] === true) continue
 
             isVisited[currentVertex.getID()] = true
@@ -179,71 +173,31 @@ function pacmanRunAway(pacmanV, ghostV) {
             isVisited[mainVertex.getID()] = false
         }
     }
-
-
-    // getWay(path, pacmanV, ghostV, isVisited, 0)
     return path
 }
 
 
-export function isSafeStep(beanV, ghostV) {
-    return isBeanPositionSafe(beanV, ghostV)
-}
+function countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path) {
+    if (path === []) return 0
 
-/**
- * перевіряє чи BEAN безпечний аби до нього йти
- * @param {Vertex} beanV
- * @param {Vertex} ghostV
- * @returns {boolean}
- */
-function isBeanPositionSafe(beanV, ghostV) {
-    // якщо вершини де привид да bean однакові то потрібно тікати
-    if (isEqualVertexes(beanV, ghostV)) return false
-    //  якщо привиду до горішка менше рівно двох вершин (тобто він в сусідній вершині) + 3-тя бо інколи вершини в 1 крок (todo подумати чи <= (2|3) вершини )
-    let bfsPathGhost2BeanV = findShortestDist_BFS(adj, ghostV, beanV, vertexes.length)
-    console.log(bfsPathGhost2BeanV)
-    return bfsPathGhost2BeanV.length >= 3
-}
 
-function findNearestSafeVertex(pacmanV, ghost1V) {
-    let vertex = []
-    for (let i = 0; i < adj[pacmanV.getID()].length; i++) {
-        let currentV = adj[pacmanV.getID()][i]
-        if (currentV.getID() === ghost1V.getID()) continue
+    if (charV.length === 1)
+        return countStepsBetweenVertexes(charNearestV, distanceV, path)
 
-        vertex.push(currentV)
-        break
+    // стою між двома вершинами шляху
+    if ((path[0].getName() === charV[0].getName() && path[1].getName() === charV[1].getName())
+        || (path[0].getName() === charV[1].getName() && path[1].getName() === charV[0].getName())) {
+        return countStepsBetweenVertexes(charNearestV, distanceV, path) - heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
     }
-    return vertex
+    // стою між своїми двома вершинами, одна з яких топова вершина
+    return countStepsBetweenVertexes(charNearestV, distanceV, path) + heuristic(charX, charY, charNearestV.getX(), charNearestV.getY())
 }
-
-
-function characterDistanceToVertex(x, y, vertexes, nearestVertex, path, i1, i2) {
-    if (vertexes.length === 1) return 0
-    if (isEqualVertexes(vertexes[0], path[i1]) && isEqualVertexes(vertexes[1], path[i2])
-        || isEqualVertexes(vertexes[0], path[i2]) && isEqualVertexes(vertexes[1], path[i1]))
-        return -1 * heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
-    return heuristic(x, y, nearestVertex.getX(), nearestVertex.getY())
-}
-
-
-export function findFarthestBean(x, y, map) {
-    let generation = 0,
-        ceil = 1,
-        isBean = false,
-        allNeighbors = [],
-        neighbors
-
-    while (ceil !== MAP_WIDTH) {
-        generation++
-        ceil += 2
-        allNeighbors = findNeighbor(generation, ceil, x, y)
-        neighbors = [...new Set(allNeighbors.filter(item => MAP[item] === 1))]
-    }
-    /*     */
-    console.log(neighbors)
-    return neighbors
-}
-
-console.log(findFarthestBean(10, 12, MAP))
-
+// todo del comments
+// let charX = 5,
+//     charY = 10,
+//     charV = [vertexes [2], vertexes[18]],
+//     charNearestV = vertexes[18],
+//     distanceV = [16],
+//     path = [vertexes[18], vertexes[17],vertexes[16]]
+//
+// console.log(countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path))
