@@ -126,11 +126,9 @@ function run() {
 
 function main() {
     fillADJ()
-    debugger
     drawMap()
 
     initCharacters()
-    debugger
     run()
 }
 

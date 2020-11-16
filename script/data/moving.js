@@ -599,23 +599,22 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
  * @param s
  * @param dest
  * @param ghost1V
- * @returns {*}
+ * @returns {*[]|*}
  */
 export function findMimimaxPath(s, dest, ghost1V) {
-    let a = ghost1V
+    if (adj[s.getID()].includes(dest)) {
 
-    let allPath = [...getAllPath(s, dest)]
+        return [[s,dest],1]
 
-    let path_map = buildPathMap(s)
+    } else {
+        let allPath = [...getAllPath(s, dest)]
+        let path_map = buildPathMap(s)
+        path_map = countAllPathWeight(path_map, allPath, ghost1V)
+        let minPath = findMinPath(path_map)
+        let minMAXPath = findMaxOfMinPath(minPath)
+        return minMAXPath
 
-    path_map = countAllPathWeight(path_map, allPath, ghost1V)
-
-    let minPath = findMinPath(path_map)
-
-    let minMAXPath = findMaxOfMinPath(minPath)
-
-    return minMAXPath
-
+    }
 }
 
 /**

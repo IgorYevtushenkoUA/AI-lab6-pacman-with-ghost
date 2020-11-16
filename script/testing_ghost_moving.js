@@ -7,8 +7,7 @@ fillADJ()
 function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix) {
     let bfs_path = findShortestDist_BFS(adj, s, dest, vertexes.length)
     allPath.push(prefix.concat(bfs_path))
-    isVisited[getIndexByVertexName(s)] = true
-    isVisited[getIndexByVertexName(dest)] = true
+    isVisited[s.getID()] = true
     prefix.push(s)
 
     for (let i = 0; i < bfs_path.length; i++) {
@@ -89,10 +88,13 @@ function getAllPath(s, dest) {
 
         for (let j = 0; j < vertexes.length; j++) isVisited[j] = false
         isVisited[s.getID()] = true
+        isVisited[dest.getID()] = true
+        isVisited[adj[s.getID()][i]]
 
         findAllPathFromSourceToDestination(adj[s.getID()][i], dest, isVisited, path, [s])
         path.shift()
         debugger
+        console.log(path)
         Array.prototype.push.apply(allPath, path)
     }
     debugger
@@ -243,7 +245,9 @@ function findMaxOfMinPath(minPaths) {
 }
 
 
-let s = vertexes[18],
-    dest = vertexes[17],
-    ghost1V = [vertexes[2], vertexes[3]]
-console.log(findMinimaxPath(s, dest, ghost1V))
+console.log([["s","dist"],1][0])
+
+// let s = vertexes[18],
+//     dest = vertexes[17],
+//     ghost1V = [vertexes[2], vertexes[3]]
+// console.log(findMinimaxPath(s, dest, ghost1V))

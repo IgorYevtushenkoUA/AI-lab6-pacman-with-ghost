@@ -81,7 +81,7 @@ export class Ghost {
 
     doSmartStep(x, y, pacmanX, pacmanY) {
         if (x === undefined || y === undefined) {
-            debugger
+            
             // alert("x|y undefined")
         }
 
@@ -109,7 +109,7 @@ export class Ghost {
                 this._old_path = [nearestGhostVertex, adj[indexV][randomV]] // nearestGhostVertex -> was ghost[0]
                 this._stepCounter++
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                debugger
+                
             } else {
                 let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                 this._old_path = bfs_path.slice(0)
@@ -118,19 +118,19 @@ export class Ghost {
                     // привид у погоні за пакменом і на одній лінії todo дати напрямок
                     let nextVertex = nearestGhostVertex.getName() === pacmanV[0].getName() ? pacmanV[1] : pacmanV[0]
                     dir = getDirFromPosition1ToVertex2(x, y, nextVertex) // nearestPacmanVertex -> was  nearestGhostVertex
-                    debugger
+                    
                 } else {
                     dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                    debugger
+                    
                 }
             }
         } else {
             if (this._old_path.length === 0) {
                 dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
-                debugger
+                
             } else {
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                debugger
+                
             }
         }
 

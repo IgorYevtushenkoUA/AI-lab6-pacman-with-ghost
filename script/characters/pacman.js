@@ -188,9 +188,9 @@ export class Pacman {
 
                     debugger
                     if (safe_path.length === 0) {
-                        debugger
                         alert("you have no variant ; ghost catch you 2")
                         dir = "STOP"
+                        debugger
                     } else {
                         let vertexes = getVertexesByPosition(x, y)
                         debugger
@@ -219,10 +219,12 @@ export class Pacman {
             if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
                 // todo тут тупі кроки їх треба зробити розумними (вони нічого не аналізують)
                 dir = getDirFromPosition1ToVertex2(x, y, beanNearestVertex)
+                debugger
             } else {
 
-                let bfs_path = findMimimaxPath(pacmanNearestVertex, beanNearestVertex, ghost1V)[0]
+                // todo [0] - дуже некоректно спрацьовує - залежно від того де і як
                 // let bfs_path = findShortestDist_BFS(adj, pacmanNearestVertex, beanNearestVertex, vertexes.length)
+                let bfs_path = findMimimaxPath(pacmanNearestVertex, beanNearestVertex, ghost1V)[0]
                 debugger
 
                 if (this.oldPath.length === 0) this.oldPath = bfs_path
@@ -241,18 +243,21 @@ export class Pacman {
 
                 if (x === bfs_path[0].getX() && y === bfs_path[0].getY()) {
                     dir = getDirFromPosition1ToVertex2(x, y, bfs_path[1])
+                    debugger
                 }
                 // if stay between vertexes
                 else {
                     if (stayBetweenVertexes(x, y, bfs_path[0], bfs_path[1])) {
                         dir = getDirFromPosition1ToVertex2(x, y, bfs_path[1])
+                        debugger
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, bfs_path[0])
+                        debugger
                     }
                 }
             }
         }
-
+        debugger
         let step = doOneStep(dir, x, y)
         this._posX = step[0]
         this._posY = step[1]
