@@ -603,19 +603,45 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
  */
 export function findMimimaxPath(s, dest, ghost1V) {
     if (adj[s.getID()].includes(dest)) {
-
         return [[s, dest], 1]
-
     } else {
         let allPath = [...getAllPath(s, dest)]
+        allPath = allPath.filter(path => path.length > 1)
+        allPath = delRepeatedVertex(allPath)
+        allPath = delDangerPath(allPath, ghost1V)
         let path_map = buildPathMap(s)
         path_map = countAllPathWeight(path_map, allPath, ghost1V)
         let minPath = findMinPath(path_map)
         let minMAXPath = findMaxOfMinPath(minPath)
         return minMAXPath
-
     }
 }
+
+function delRepeatedVertex(path) {
+    let cleanPath = []
+    for (let i = 0; i < path.length; i++) {
+        if (path[i].length === (new Set(path[i])).size) {
+            cleanPath.push(path[i])
+        }
+    }
+    return cleanPath
+}
+
+function delDangerPath(path, ghostV) {
+    let newPath = []
+    for (let i = 0; i < path.length; i++) {
+        let safePath = true
+        for (let j = 0; j < ghostV.length; j++) {
+            if (path[i].includes(ghostV[0])) {
+                safePath = false
+            }
+        }
+        if (safePath)
+            newPath.push(path[i])
+    }
+    return newPath
+}
+
 
 /**
  * знаходить всі можливі шляхи із точки А в точку Б (інколи там є повтори типу А-Б-В-Б-Д)todo виправити це
@@ -907,20 +933,21 @@ export function pacmanRunAway(pacmanV, ghostV) {
             path.push(currentVertex)
             deep++
             wasAdded = true
-            i=0
+            i = 0
             mainVertex = currentVertex
+            if (deep === DEEP_CONST) {
+                return path
+            }
         }
         if (!wasAdded) {
             // isVisited[mainVertex.getID()] = false
             path.pop()
-            mainVertex = path[path.length-1]
+            mainVertex = path[path.length - 1]
             deep--
         }
     }
     return path
 }
-
-console.log(pacmanRunAway(vertexes[21], vertexes[19]));
 
 
 // important!

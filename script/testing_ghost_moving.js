@@ -52,9 +52,11 @@ function getIndexByVertexName(vertex) {
 function findMinimaxPath(s, dest, ghost1V) {
 
     let allPath = [...getAllPath(s, dest)]
-    debugger
+    allPath = allPath.filter(path => path.length > 1)
+    allPath = delRepeatedVertex(allPath)
+    allPath = delDangerPath(allPath, ghost1V)
+    allPath = []
     let path_map = buildPathMap(s)
-    debugger
     path_map = countAllPathWeight(path_map, allPath, ghost1V)
     debugger
     let minPath = findMinPath(path_map)
@@ -62,8 +64,33 @@ function findMinimaxPath(s, dest, ghost1V) {
     let minMAXPath = findMaxOfMinPath(minPath)
     debugger
     return minMAXPath
-
 }
+
+function delRepeatedVertex(path) {
+    let cleanPath = []
+    for (let i = 0; i < path.length; i++) {
+        if (path[i].length === (new Set(path[i])).size) {
+            cleanPath.push(path[i])
+        }
+    }
+    return cleanPath
+}
+
+function delDangerPath(path, ghostV) {
+    let newPath = []
+    for (let i = 0; i < path.length; i++) {
+        let safePath = true
+        for (let j = 0; j < ghostV.length; j++) {
+            if (path[i].includes(ghostV[0])) {
+                safePath = false
+            }
+        }
+        if (safePath)
+            newPath.push(path[i])
+    }
+    return newPath
+}
+
 
 /**
  * знаходить всі можливі шляхи із точки А в точку Б (інколи там є повтори типу А-Б-В-Б-Д)todo виправити це
@@ -72,16 +99,9 @@ function findMinimaxPath(s, dest, ghost1V) {
  * @returns {[]}
  */
 function getAllPath(s, dest) {
-    debugger
     let isVisited = []
     let allPath = []
 
-    let allNeighbor = []
-    debugger
-    for (let i = 0; i < adj[s.getID()].length; i++) {
-        allNeighbor.push(adj[s.getID()][i])
-    }
-    debugger
     let index = adj[s.getID()].length
     for (let i = 0; i < index; i++) {
         let path = [s]
@@ -93,11 +113,8 @@ function getAllPath(s, dest) {
 
         findAllPathFromSourceToDestination(adj[s.getID()][i], dest, isVisited, path, [s])
         path.shift()
-        debugger
-        console.log(path)
         Array.prototype.push.apply(allPath, path)
     }
-    debugger
     return allPath
 }
 
@@ -244,10 +261,8 @@ function findMaxOfMinPath(minPaths) {
     debugger
 }
 
-let a
-console.log(a===undefined)
 
-// let s = vertexes[18],
-//     dest = vertexes[17],
-//     ghost1V = [vertexes[2], vertexes[3]]
-// console.log(findMinimaxPath(s, dest, ghost1V))
+let s = vertexes[18],
+    dest = vertexes[17],
+    ghost1V = [vertexes[2], vertexes[3]]
+console.log(findMinimaxPath(s, dest, ghost1V))
