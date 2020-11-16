@@ -1002,3 +1002,28 @@ export function findNearestSafeVertex(pacmanV, pacmanVertexes, ghost1V) {
     }
 }
 
+/**
+ *
+ * @param {} pacmanVertex
+ * @param {} pacmanNearestVertex
+ * @param {} g1x
+ * @param {} g1y
+ * @param {} ghost1V
+ * @param {} ghost1NearestVertex
+ * @returns {Vertex}
+ */
+export function findMostSafeVertex(pacmanVertex,pacmanNearestVertex, g1x, g1y, ghost1V,ghost1NearestVertex){
+    if (pacmanVertex.length === 1) {
+        return pacmanNearestVertex
+    }
+
+    let ghostPath1 = findShortestDist_BFS(adj, ghost1NearestVertex, pacmanVertex[0], vertexes.length),
+        ghostPath2 = findShortestDist_BFS(adj, ghost1NearestVertex, pacmanVertex[1], vertexes.length),
+        steps1 = countStepsToVertex(g1x, g1y, ghost1V, ghost1NearestVertex, pacmanVertex[0], ghostPath1),
+        steps2 = countStepsToVertex(g1x, g1y, ghost1V, ghost1NearestVertex, pacmanVertex[1], ghostPath2)
+
+    return (steps1 <= steps2) ? pacmanVertex[1] : pacmanVertex[0]
+}
+
+
+

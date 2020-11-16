@@ -143,7 +143,8 @@ export class Pacman {
                     else dir = "BOTTOM"
                 }
                 debugger
-            } else {
+            }
+            else {
                 if (isEqualVertexes(pacmanNearestVertex, ghost1NearestVertex)) {
                     // let safeV = findNearestSafeVertex(pacmanNearestVertex, ghost1NearestVertex)
                     let safeV = findNearestSafeVertex(pacmanNearestVertex, pacmanVertex, ghost1NearestVertex)
