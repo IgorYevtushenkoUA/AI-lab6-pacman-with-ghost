@@ -154,6 +154,7 @@ export class Pacman {
                         // you have problems todo !!!!!!!!!!!
                         alert("you have no variant ; ghost catch you 1")
                         dir = "STOP"
+                        debugger
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
                         debugger
@@ -174,10 +175,14 @@ export class Pacman {
                         debugger
                     }
                     let safe_path = pacmanRunAway(mostSafeVertexForPacman, ghost1NearestVertex)
+
+
                     debugger
                     if (safe_path.length === 0) {
+                        let safeV = findNearestSafeVertex(pacmanNearestVertex, pacmanVertex, ghost1NearestVertex)
                         alert("you have no variant ; ghost catch you 2")
-                        dir = "STOP"
+                        debugger
+                        dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
                         debugger
                     } else {
                         let vertexes = getVertexesByPosition(x, y)
@@ -254,8 +259,9 @@ export class Pacman {
                     if (safeV.length === 0) {
                         debugger
                         // you have problems todo !!!!!!!!!!!
-                        alert("you have no variant ; ghost catch you 1")
+                        alert("you have no variant ; ghost catch you 3")
                         dir = "STOP"
+                        debugger
                     } else {
                         dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
                         debugger

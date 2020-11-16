@@ -895,28 +895,33 @@ export function pacmanRunAway(pacmanV, ghostV) {
     isVisited[pacmanV.getID()] = true
 
     let deep = 1
-    let mainVertex = path[0]
+    let mainVertex = pacmanV
     while (deep < DEEP_CONST && path.length > 0) {
         let wasAdded = false
         for (let i = 0; i < adj[mainVertex.getID()].length; i++) {
             let currentVertex = adj[mainVertex.getID()][i]
-            if (isEqualVertexes(currentVertex, ghostV)) continue
+            if (currentVertex.getID() === ghostV.getID()) continue
             if (isVisited[currentVertex.getID()] === true) continue
 
             isVisited[currentVertex.getID()] = true
             path.push(currentVertex)
             deep++
             wasAdded = true
+            i=0
             mainVertex = currentVertex
         }
         if (!wasAdded) {
+            // isVisited[mainVertex.getID()] = false
             path.pop()
+            mainVertex = path[path.length-1]
             deep--
-            isVisited[mainVertex.getID()] = false
         }
     }
     return path
 }
+
+console.log(pacmanRunAway(vertexes[21], vertexes[19]));
+
 
 // important!
 export function countStepsToVertex(charX, charY, charV, charNearestV, distanceV, path) {
@@ -969,6 +974,4 @@ export function findNearestSafeVertex(pacmanV, pacmanVertexes, ghost1V) {
         return [currentV]
     }
 }
-
-console.log(findNearestSafeVertex(vertexes[4], [vertexes[4], vertexes[10]], vertexes[4]))
 
