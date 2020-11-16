@@ -244,8 +244,8 @@ function findMaxOfMinPath(minPaths) {
     debugger
 }
 
-
-console.log([["s","dist"],1][0])
+let a
+console.log(a===undefined)
 
 // let s = vertexes[18],
 //     dest = vertexes[17],

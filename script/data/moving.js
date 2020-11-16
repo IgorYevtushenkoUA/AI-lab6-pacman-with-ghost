@@ -9,7 +9,7 @@ todo зробити універсальний поворот (бо в мене 
 todo
  */
 
-// fillADJ() // дублює дані - потрібно лише для тесту
+fillADJ() // дублює дані - потрібно лише для тесту
 
 /**
  * зробити один крок
@@ -604,7 +604,7 @@ function findAllPathFromSourceToDestination(s, dest, isVisited, allPath, prefix)
 export function findMimimaxPath(s, dest, ghost1V) {
     if (adj[s.getID()].includes(dest)) {
 
-        return [[s,dest],1]
+        return [[s, dest], 1]
 
     } else {
         let allPath = [...getAllPath(s, dest)]
@@ -953,15 +953,22 @@ function countStepsBetweenVertexes(v1, v2, path) {
  * @param {Vertex} ghost1V
  * @returns {[]}
  */
-export function findNearestSafeVertex(pacmanV, ghost1V) {
-    let vertex = []
+export function findNearestSafeVertex(pacmanV, pacmanVertexes, ghost1V) {
+    let secondVertex
+    if (pacmanVertexes.length > 1) {
+        secondVertex = pacmanV.getID() === pacmanVertexes[0].getID()
+            ? pacmanVertexes[1]
+            : pacmanVertexes[0]
+    }
+    if (secondVertex !== undefined && secondVertex.getID() !== ghost1V.getID()) {
+        return [secondVertex]
+    }
     for (let i = 0; i < adj[pacmanV.getID()].length; i++) {
         let currentV = adj[pacmanV.getID()][i]
         if (currentV.getID() === ghost1V.getID()) continue
-
-        vertex.push(currentV)
-        break
+        return [currentV]
     }
-    return vertex
 }
+
+console.log(findNearestSafeVertex(vertexes[4], [vertexes[4], vertexes[10]], vertexes[4]))
 
