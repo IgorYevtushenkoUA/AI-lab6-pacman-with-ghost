@@ -6,7 +6,7 @@ import {
     doOneStep,
     getIndexByVertexName,
     getNearestVertex, getVertexesByPosition,
-    getDirFromPosition1ToVertex2
+    getDirFromPosition1ToVertex2,getDirFromPosition1ToPosition2
 } from "../data/moving.js";
 
 
@@ -101,7 +101,7 @@ export class Ghost {
             якщо немає початкового шляху (загалом при створенні світу) шукаю найближчу вершину та йду до неї
             якщо є шлях то йду до вершини за шляхом що вже складений нічого не вираховуючи
          */
-
+        debugger
         if (ghostV.length === 1) {
             if (this._stepCounter % RANDOM_STEP === 0) {
                 let indexV = getIndexByVertexName(nearestGhostVertex) // nearestGhostVertex -> was ghost[0]
@@ -109,7 +109,7 @@ export class Ghost {
                 this._old_path = [nearestGhostVertex, adj[indexV][randomV]] // nearestGhostVertex -> was ghost[0]
                 this._stepCounter++
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                
+                debugger
             } else {
                 let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                 this._old_path = bfs_path.slice(0)
@@ -118,19 +118,35 @@ export class Ghost {
                     // привид у погоні за пакменом і на одній лінії todo дати напрямок
                     let nextVertex = nearestGhostVertex.getName() === pacmanV[0].getName() ? pacmanV[1] : pacmanV[0]
                     dir = getDirFromPosition1ToVertex2(x, y, nextVertex) // nearestPacmanVertex -> was  nearestGhostVertex
-                    
+                    debugger
                 } else {
                     dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                    
+                    debugger
                 }
             }
         } else {
             if (this._old_path.length === 0) {
-                dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
-                
+
+                if (ghostV.length === 1 && pacmanV.length === 2 && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[0].getID() === pacmanV[1].getID())){
+                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
+                    debugger
+                }
+                if (ghostV.length === 2 && pacmanV.length === 2
+                    && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[0].getID() === pacmanV[1].getID()||ghostV[1].getID() === pacmanV[0].getID()  || ghostV[1].getID() === pacmanV[1].getID())){
+                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
+                    debugger
+                }
+                else if (ghostV.length === 2 && pacmanV.length === 1 && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[1].getID() === pacmanV[0].getID())){
+                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
+                    debugger
+                }
+                else {
+                    dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
+                    debugger
+                }
             } else {
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                
+                debugger
             }
         }
 

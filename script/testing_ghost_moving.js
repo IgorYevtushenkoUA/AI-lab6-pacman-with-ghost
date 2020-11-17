@@ -20,7 +20,7 @@ import {MAP} from "./data/data_map";
 import {findShortestDist_BFS} from "./algorithms/bfs";
 import {adj, vertexes} from "./data/data_graphs";
 
-function doSmartStep2(x, y, g1x, g1y) {
+function doSmartStep(x, y, g1x, g1y) {
 
     let nearestBean = findNearestBean(x, y, MAP),
         beanCoordinates = getBEANCoordinationByMapPositions(nearestBean),

@@ -834,7 +834,10 @@ export function isSafePosition(characterX, characterY, characterV, characterNear
     if (isEqualVertexes(characterNearestV, nearestGhostV))
         return false
     let bfsPathFromGhost2Pacman = findShortestDist_BFS(adj, nearestGhostV, characterNearestV, vertexes.length)
-    return bfsPathFromGhost2Pacman.length >= 3 || isSafeStepsDistances(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV, bfsPathFromGhost2Pacman)
+
+    let isSafeStep = isSafeStepsDistances(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV, bfsPathFromGhost2Pacman)
+    debugger
+    return (bfsPathFromGhost2Pacman.length >= 3 && isSafeStep) || isSafeStep
 }
 
 /**
@@ -858,6 +861,7 @@ function isSafeStepsDistances(x, y, v, nearestV, x1, y1, v2, nearestV2, path) {
 
     stepDist += characterDistanceToVertex(x, y, v, nearestV, path, path.length - 1, path.length - 2)
     stepDist += characterDistanceToVertex(x1, y1, v2, nearestV2, path, 0, 1)
+    debugger
     return stepDist >= SAFE_NUM_OF_STEPS
 }
 
@@ -995,12 +999,62 @@ export function findNearestSafeVertex(pacmanV, pacmanVertexes, ghost1V) {
     if (secondVertex !== undefined && secondVertex.getID() !== ghost1V.getID()) {
         return [secondVertex]
     }
+    let nxtVertex = []
     for (let i = 0; i < adj[pacmanV.getID()].length; i++) {
         let currentV = adj[pacmanV.getID()][i]
         if (currentV.getID() === ghost1V.getID()) continue
-        return [currentV]
+        nxtVertex.push([currentV])
     }
+    let randIndex = Math.floor(Math.random() * nxtVertex.length)
+    return nxtVertex[randIndex]
 }
+
+
+export function findNearestSafeVertexPRO (pacmanV, pacmanVertexes, ghostVertexes){
+    let secondVertex
+    if (pacmanVertexes.length > 1) {
+        secondVertex = pacmanV.getID() === pacmanVertexes[0].getID()
+            ? pacmanVertexes[1]
+            : pacmanVertexes[0]
+    }
+
+    if (secondVertex!== undefined){
+        let isCorrect = true
+        for(let i = 0 ; i < ghostVertexes.length; i++)
+            if (ghostVertexes[i].getID() === secondVertex.getID())
+                isCorrect = false
+
+        if (isCorrect)
+            return [secondVertex]
+    }
+    let nxtVertex = []
+    for(let i = 0 ; i < adj[pacmanV.getID()].length; i++){
+        let currentV = adj[pacmanV.getID()][i]
+        let isCorrect = false
+        for(let j = 0; j< ghostVertexes.length; j++){
+            if(ghostVertexes[j].getID() === currentV.getID()) {
+                isCorrect = true
+            }
+            // if (ghostComeFaster())
+        }
+        if (isCorrect) continue
+        nxtVertex.push([currentV])
+    }
+
+    if (nxtVertex.length === 0 ) return nxtVertex
+
+    let randIndex = Math.floor(Math.random() * nxtVertex.length)
+    return nxtVertex[randIndex]
+
+
+}
+
+let pacmanV = vertexes[9],
+    pacmanVertexes = [vertexes[9]],
+    ghostVertexes=[vertexes[8],vertexes[7]]
+
+
+console.log(findNearestSafeVertexPRO(pacmanV, pacmanVertexes, ghostVertexes));
 
 /**
  *
@@ -1012,7 +1066,7 @@ export function findNearestSafeVertex(pacmanV, pacmanVertexes, ghost1V) {
  * @param {} ghost1NearestVertex
  * @returns {Vertex}
  */
-export function findMostSafeVertex(pacmanVertex,pacmanNearestVertex, g1x, g1y, ghost1V,ghost1NearestVertex){
+export function findMostSafeVertex(pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex) {
     if (pacmanVertex.length === 1) {
         return pacmanNearestVertex
     }

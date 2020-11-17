@@ -8,12 +8,12 @@ import {Ghost} from "./characters/ghost.js";
 export let ctx = document.getElementById('pacman_game').getContext("2d")
 
 //   x * WIDTH + 11, y * WIDTH + 10
-let startPacmanX = 5, startPacmanY = 9, ghost1X = 5, ghost1Y = 2,
+let startPacmanX = 11, startPacmanY = 1, ghost1X = 6, ghost1Y = 1,
     score = 0,
     timerDelay = 100,
     intervalID,
     pacman,
-    ghost1, ghost2
+    ghost1
 
 
 function drawMap() {
@@ -95,11 +95,6 @@ function updateCanvas() {
     clearPacmanFootprint(x, y)
     clearGhostFootPrint(g1X, g1Y)
 
-    if (g1X === x && g1Y === y) {
-        debugger
-        alert("ghost kill pacman")
-    }
-
     if (score === ALL_BEANS) {
         alert("win")
         return
@@ -113,6 +108,11 @@ function updateCanvas() {
     ghost1.doSmartStep(g1X, g1Y, x, y)
     ghost1.draw()
     debugger
+
+    if (g1X === x && g1Y === y) {
+        debugger
+        alert("ghost kill pacman")
+    }
 
 }
 
