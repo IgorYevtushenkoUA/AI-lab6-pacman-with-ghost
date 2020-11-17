@@ -78,30 +78,16 @@ export class Ghost {
         ctx.lineTo(this._x * WIDTH + 11, this._y * HEIGHT + 10)
         ctx.fill()
     }
+    oldDir = "RIGHT"
 
     doSmartStep(x, y, pacmanX, pacmanY) {
-        if (x === undefined || y === undefined) {
-            
-            // alert("x|y undefined")
-        }
-
-
         let ghostV = getVertexesByPosition(x, y)
         let pacmanV = getVertexesByPosition(pacmanX, pacmanY)
 
         let nearestGhostVertex = getNearestVertex(x, y, ghostV)
         let nearestPacmanVertex = getNearestVertex(pacmanX, pacmanY, pacmanV)
         let dir
-        /*
-         якщо стою на вершині
-            якщо крок ділиться націло на 4 то роблю рандомний крок
-            інакше перебудовую шлях
 
-         якщо спочатку стоїть між вершинами
-            якщо немає початкового шляху (загалом при створенні світу) шукаю найближчу вершину та йду до неї
-            якщо є шлях то йду до вершини за шляхом що вже складений нічого не вираховуючи
-         */
-        debugger
         if (ghostV.length === 1) {
             if (this._stepCounter % RANDOM_STEP === 0) {
                 let indexV = getIndexByVertexName(nearestGhostVertex) // nearestGhostVertex -> was ghost[0]
@@ -116,7 +102,13 @@ export class Ghost {
                 this._stepCounter++
                 if (bfs_path.length === 0) {
                     // привид у погоні за пакменом і на одній лінії todo дати напрямок
-                    let nextVertex = nearestGhostVertex.getName() === pacmanV[0].getName() ? pacmanV[1] : pacmanV[0]
+                    let nextVertex
+                    if (pacmanV.length > 1){
+                        nextVertex = nearestGhostVertex.getName() === pacmanV[0].getName() ? pacmanV[1] : pacmanV[0]
+                    }else {
+                        nextVertex = adj[ghostV[0].getID()][0]
+                    }
+
                     dir = getDirFromPosition1ToVertex2(x, y, nextVertex) // nearestPacmanVertex -> was  nearestGhostVertex
                     debugger
                 } else {
@@ -124,32 +116,13 @@ export class Ghost {
                     debugger
                 }
             }
-        } else {
-            if (this._old_path.length === 0) {
-
-                if (ghostV.length === 1 && pacmanV.length === 2 && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[0].getID() === pacmanV[1].getID())){
-                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
-                    debugger
-                }
-                if (ghostV.length === 2 && pacmanV.length === 2
-                    && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[0].getID() === pacmanV[1].getID()||ghostV[1].getID() === pacmanV[0].getID()  || ghostV[1].getID() === pacmanV[1].getID())){
-                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
-                    debugger
-                }
-                else if (ghostV.length === 2 && pacmanV.length === 1 && (ghostV[0].getID() === pacmanV[0].getID()  || ghostV[1].getID() === pacmanV[0].getID())){
-                    dir = getDirFromPosition1ToPosition2(x,y,pacmanX, pacmanY)
-                    debugger
-                }
-                else {
-                    dir = getDirFromPosition1ToVertex2(x, y, nearestGhostVertex)
-                    debugger
-                }
-            } else {
-                dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                debugger
+            this.oldDir = dir
+        }else {
+            if (dir === undefined) {
+                dir = this.oldDir
             }
         }
-
+        debugger
         if (dir === undefined) return
         let step = doOneStep(dir, x, y)
         this._x = step[0]
