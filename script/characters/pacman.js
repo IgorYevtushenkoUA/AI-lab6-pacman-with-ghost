@@ -100,150 +100,6 @@ export class Pacman {
         ctx.fill()
     }
 
-    // doSmartStep(x, y, g1x, g1y) {
-    //
-    //     let nearestBean = findNearestBean(x, y, MAP),
-    //         beanCoordinates = getBEANCoordinationByMapPositions(nearestBean),
-    //         beanX = beanCoordinates[0],
-    //         beanY = beanCoordinates[1],
-    //         beanVertex = getVertexesByPosition(beanX, beanY),
-    //         beanNearestVertex = getNearestVertex(beanX, beanY, beanVertex),
-    //
-    //         farthestBean = findFarthestBean(x, y, MAP),
-    //         farthestBeanCoordinates = getBEANCoordinationByMapPositions(farthestBean),
-    //         farthestBeanX = farthestBeanCoordinates[0],
-    //         farthestBeanY = farthestBeanCoordinates[1],
-    //         farthestBeanVertex = getVertexesByPosition(farthestBeanX, farthestBeanY),
-    //         farthestBeanNearestVertex = getNearestVertex(farthestBeanX, farthestBeanY, farthestBeanVertex),
-    //
-    //         pacmanVertex = getVertexesByPosition(x, y),
-    //         pacmanNearestVertex = getNearestVertex(x, y, pacmanVertex),
-    //
-    //         ghost1V = getVertexesByPosition(g1x, g1y),
-    //         ghost1NearestVertex = getNearestVertex(g1x, g1y, ghost1V),
-    //
-    //         noObstaclesInTheWay = hasNotWallBetweenPacmanAndBean(x, y, beanX, beanY),
-    //         dir = ""
-    //
-    //     debugger
-    //
-    //     // якщо лежить в одному напрямку без перешкод
-    //     if (noObstaclesInTheWay[0]) {
-    //         let pacmanSafePosition = isSafePosition(x, y, pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex),
-    //             beanSafePosition = isSafePosition(beanX, beanY, beanVertex, beanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
-    //
-    //         if (pacmanSafePosition && beanSafePosition) {
-    //             if (noObstaclesInTheWay[1]) {
-    //                 if (beanX < x) dir = "LEFT"
-    //                 else dir = "RIGHT"
-    //             }
-    //             // go by Y
-    //             else if (noObstaclesInTheWay[2]) {
-    //                 if (beanY < y) dir = "TOP"
-    //                 else dir = "BOTTOM"
-    //             }
-    //             debugger
-    //         } else {
-    //
-    //             let beanNearestV = beanSafePosition ? beanNearestVertex : farthestBeanNearestVertex,
-    //                 minMaxPath = findMimimaxPath(pacmanNearestVertex, beanNearestV, ghost1V),
-    //                 isBeanSafe = isSafePosition(beanNearestV.getX(), beanNearestV.getY(), [beanNearestV], beanNearestV, g1x, g1y, ghost1V, ghost1NearestVertex)
-    //
-    //             debugger
-    //             if (minMaxPath !== undefined && isBeanSafe) {
-    //                 debugger
-    //                 let path = minMaxPath[0]
-    //                 /** якщо стою на вершині то іду до другої вершини
-    //                  *  інакше стою між вершинами
-    //                  *      якщо стою між А та Б то іду до Б
-    //                  *      якщо не Стою між А та Б іду до А*/
-    //                 if (path[0].getX() === x && path[0].getY() === y) {
-    //                     dir = getDirFromPosition1ToVertex2(x, y, path[1])
-    //                     debugger
-    //                 } else {
-    //                     if (stayBetweenVertexes(x, y, path[0], path[1])) {
-    //                         dir = getDirFromPosition1ToVertex2(x, y, path[1])
-    //                         debugger
-    //                     } else {
-    //                         dir = getDirFromPosition1ToVertex2(x, y, path[0])
-    //                         debugger
-    //                     }
-    //                 }
-    //             } else {
-    //                 /********************************************* */
-    //                 let nxtVertex = findNearestSafeVertexPRO(pacmanNearestVertex, pacmanVertex, ghost1V)
-    //                 if (nxtVertex.length > 0) {
-    //                     dir = getDirFromPosition1ToVertex2(x, y, nxtVertex[0])
-    //                     debugger
-    //                 } else {
-    //                     dir = "STOP"
-    //                 }
-    //                 /********************************************* */
-    //             }
-    //         }
-    //     }
-    //     // якщо лежить у межах різних вершин де є перешкоди  вигляді стін
-    //     else {
-    //         let pacmanSafePosition = isSafePosition(x, y, pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex),
-    //             beanSafePosition = isSafePosition(beanX, beanY, beanVertex, beanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
-    //
-    //         debugger
-    //
-    //         if (pacmanSafePosition) {
-    //             let beanNearestV = beanSafePosition ? beanNearestVertex : farthestBeanNearestVertex,
-    //                 minMaxPath = findMimimaxPath(pacmanNearestVertex, beanNearestV, ghost1V),
-    //                 isBeanSafe = isSafePosition(beanNearestV.getX(), beanNearestV.getY(), [beanNearestV], beanNearestV, g1x, g1y, ghost1V, ghost1NearestVertex)
-    //
-    //
-    //             if (minMaxPath !== undefined && isBeanSafe) {
-    //                 debugger
-    //                 let path = minMaxPath[0]
-    //                 /** якщо стою на вершині то іду до другої вершини
-    //                  *  інакше стою між вершинами
-    //                  *      якщо стою між А та Б то іду до Б
-    //                  *      якщо не Стою між А та Б іду до А*/
-    //                 if (path[0].getX() === x && path[0].getY() === y) {
-    //                     dir = getDirFromPosition1ToVertex2(x, y, path[1])
-    //                     debugger
-    //                 } else {
-    //                     if (stayBetweenVertexes(x, y, path[0], path[1])) {
-    //                         dir = getDirFromPosition1ToVertex2(x, y, path[1])
-    //                         debugger
-    //                     } else {
-    //                         dir = getDirFromPosition1ToVertex2(x, y, path[0])
-    //                         debugger
-    //                     }
-    //                 }
-    //             } else {
-    //                 /********************************************* */
-    //                 let nxtVertex = findNearestSafeVertexPRO(pacmanNearestVertex, pacmanVertex, ghost1V)
-    //                 if (nxtVertex.length > 0) {
-    //                     dir = getDirFromPosition1ToVertex2(x, y, nxtVertex[0])
-    //                     debugger
-    //                 } else {
-    //                     dir = "STOP"
-    //                 }
-    //                 /********************************************* */
-    //             }
-    //         } else {
-    //             /********************************************* */
-    //             let nxtVertex = findNearestSafeVertexPRO(pacmanNearestVertex, pacmanVertex, ghost1V)
-    //             if (nxtVertex.length > 0) {
-    //                 dir = getDirFromPosition1ToVertex2(x, y, nxtVertex[0])
-    //                 debugger
-    //             } else {
-    //                 dir = "STOP"
-    //             }
-    //             /********************************************* */
-    //         }
-    //     }
-    //     let step = doOneStep(dir, x, y)
-    //     this._posX = step[0]
-    //     this._posY = step[1]
-    // }
-
-
-
     doSmartStep(x, y, g1x, g1y) {
 
         let nearestBean = findNearestBean(x, y, MAP),
@@ -322,10 +178,15 @@ export class Pacman {
                     debugger
                     if (safe_path.length === 0) {
                         let safeV = findNearestSafeVertexPRO(pacmanNearestVertex, pacmanVertex, ghost1V)
-                        alert("you have no variant ; ghost catch you 2")
-                        debugger
-                        dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
-                        debugger
+                        if (safeV.length === 0) {
+                            debugger
+                            alert("you have no variant ; ghost catch you 2")
+                            dir = "STOP"
+                            debugger
+                        } else {
+                            dir = getDirFromPosition1ToVertex2(x, y, safeV[0])
+                            debugger
+                        }
                     } else {
                         let vertexes = getVertexesByPosition(x, y)
                         debugger
@@ -345,12 +206,10 @@ export class Pacman {
         else {
             let pacmanSafePosition = isSafePosition(x, y, pacmanVertex, pacmanNearestVertex, g1x, g1y, ghost1V, ghost1NearestVertex)
             if (pacmanSafePosition) {
+                // todo ця перевірка якась дивна можливо її варто прибрати
                 if (pacmanNearestVertex.getName() === beanNearestVertex.getName()) {
                     // todo ось тут вся погибель - тут він і тікає і йде бо біпера назад (туди - назад) саме тут
                     dir = getDirFromPosition1ToVertex2(x, y, beanNearestVertex)
-
-                    // зробити перевірку на безпечність позиції - якщо небезпечна то тікати інакше те що робив до цього
-
                     debugger
                 } else {
                     let minMaxPath = findMimimaxPath(pacmanNearestVertex, beanNearestVertex, ghost1V)
@@ -396,7 +255,7 @@ export class Pacman {
                         if (safeV.length === 0) {
                             debugger
                             // you have problems todo !!!!!!!!!!!
-                            alert("you have no variant ; ghost catch you 1")
+                            alert("you have no variant ; ghost catch you 3")
                             dir = "STOP"
                             debugger
                         } else {
@@ -413,7 +272,7 @@ export class Pacman {
                     if (safeV.length === 0) {
                         debugger
                         // you have problems todo !!!!!!!!!!!
-                        alert("you have no variant ; ghost catch you 3")
+                        alert("you have no variant ; ghost catch you 4")
                         dir = "STOP"
                         debugger
                     } else {

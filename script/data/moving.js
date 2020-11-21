@@ -818,7 +818,7 @@ function findMaxOfMinPath(minPaths) {
 
 }
 
-/**
+/** todo (bfsPathFromGhost2Pacman.length >= 3 && isSafeStep) - можливо і не потрібна бо по ідеї лише 7 кроків норм
  * перевіряє чи позиція ОБ'ЄКТА А - є безпечною
  * @param {number} characterX
  * @param {number} characterY
@@ -836,7 +836,7 @@ export function isSafePosition(characterX, characterY, characterV, characterNear
     let bfsPathFromGhost2Pacman = findShortestDist_BFS(adj, nearestGhostV, characterNearestV, vertexes.length)
 
     let isSafeStep = isSafeStepsDistances(characterX, characterY, characterV, characterNearestV, ghostX, ghostY, ghostV, nearestGhostV, bfsPathFromGhost2Pacman)
-    debugger
+    
     return (bfsPathFromGhost2Pacman.length >= 3 && isSafeStep) || isSafeStep
 }
 
@@ -861,7 +861,7 @@ function isSafeStepsDistances(x, y, v, nearestV, x1, y1, v2, nearestV2, path) {
 
     stepDist += characterDistanceToVertex(x, y, v, nearestV, path, path.length - 1, path.length - 2)
     stepDist += characterDistanceToVertex(x1, y1, v2, nearestV2, path, 0, 1)
-    debugger
+    
     return stepDist >= SAFE_NUM_OF_STEPS
 }
 

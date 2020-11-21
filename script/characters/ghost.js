@@ -95,7 +95,7 @@ export class Ghost {
                 this._old_path = [nearestGhostVertex, adj[indexV][randomV]] // nearestGhostVertex -> was ghost[0]
                 this._stepCounter++
                 dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                debugger
+                
             } else {
                 let bfs_path = findShortestDist_BFS(adj, nearestGhostVertex, nearestPacmanVertex, vertexes.length)
                 this._old_path = bfs_path.slice(0)
@@ -110,10 +110,10 @@ export class Ghost {
                     }
 
                     dir = getDirFromPosition1ToVertex2(x, y, nextVertex) // nearestPacmanVertex -> was  nearestGhostVertex
-                    debugger
+                    
                 } else {
                     dir = getDirFromPosition1ToVertex2(x, y, this._old_path[1])
-                    debugger
+                    
                 }
             }
             this.oldDir = dir
@@ -122,7 +122,7 @@ export class Ghost {
                 dir = this.oldDir
             }
         }
-        debugger
+        
         if (dir === undefined) return
         let step = doOneStep(dir, x, y)
         this._x = step[0]

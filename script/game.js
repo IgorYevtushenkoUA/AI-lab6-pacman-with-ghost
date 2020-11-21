@@ -92,6 +92,11 @@ function updateCanvas() {
         g1X = ghost1.getX(),
         g1Y = ghost1.getY()
 
+    if (g1X === x && g1Y === y) {
+        debugger
+        alert("ghost kill pacman")
+    }
+
     clearPacmanFootprint(x, y)
     clearGhostFootPrint(g1X, g1Y)
 
@@ -105,14 +110,17 @@ function updateCanvas() {
     pacman.draw()
     debugger
 
+    if (pacman.getX() === g1X && pacman.getY() === g1Y){
+
+        alert("ghost kill pacman")
+        debugger
+    }
+    debugger
+
+
     ghost1.doSmartStep(g1X, g1Y, x, y)
     ghost1.draw()
     debugger
-
-    if (g1X === x && g1Y === y) {
-        debugger
-        alert("ghost kill pacman")
-    }
 
 }
 
